@@ -169,7 +169,6 @@ export default function PropertyDetailPage() {
     }
 
     // Here you would typically send the appointment data to your backend
-    console.log("Appointment booked:", appointmentForm);
     toast.success("Appointment booked successfully!");
     setIsAppointmentDialogOpen(false);
     setAppointmentForm({
@@ -191,7 +190,6 @@ export default function PropertyDetailPage() {
     }
 
     // Here you would typically send the request info data to your backend
-    console.log("Request for more info sent:", requestInfoForm);
     toast.success("Your request has been sent successfully!");
     setIsRequestInfoDialogOpen(false);
     setRequestInfoForm({

@@ -69,7 +69,6 @@ export default function PropertyList({ refresh, onEdit }: PropertyListProps) {
   }, [refresh]);
 
   const handleDelete = async (id: string | undefined) => {
-    console.log("Deleting property with ID:", id);
     if (!id) {
       setDeleting(false);
       setDeleteProperty(null);

@@ -29,7 +29,6 @@ export default function ContactPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // In a real application, you would send this formData to your backend API
-    console.log("Form submitted:", formData); // For demonstration
 
     // Simulate API call success
     toast.success("Thank you for your message! We'll get back to you soon.");

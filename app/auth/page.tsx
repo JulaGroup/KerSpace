@@ -46,8 +46,6 @@ const AuthPage = () => {
       if (response.ok) {
         const data = await response.json();
         if (data && data.token) {
-          console.log("Login successful!", data.token);
-          console.log(data);
           toast.success("Signed in successfully!");
           // Store token for redirect logic
           if (typeof window !== "undefined") {
@@ -93,7 +91,6 @@ const AuthPage = () => {
         toast.error("Failed to create account. Please try again.");
       }
     } catch (error: any) {
-      console.log(error);
       if (error.response && error.response.data) {
         toast.error(error.response.data.message);
       }
