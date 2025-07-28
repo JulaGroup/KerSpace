@@ -6,6 +6,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -15,11 +26,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Property } from "@/types/property";
+import { Appointment } from "@/types/appointment";
 import {
   MapPin,
   Bed,
@@ -42,17 +55,37 @@ import {
   MessageCircle,
   Video,
   X, // Added X icon for close button
-  Info, // Added Info icon for Request More Info
+  Info,
+  Loader2, // Added Info icon for Request More Info
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { useFavorites } from "@/contexts/FavoritesContext";
+import LoadingPage from "@/components/loading";
 
 export default function PropertyDetailPage() {
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [userAppointment, setUserAppointment] = useState<Appointment | null>(
+    null
+  );
+  // State for unsave confirmation dialog
+  const [showUnsaveConfirm, setShowUnsaveConfirm] = useState(false);
+  // Edit appointment form state (must be at top level)
+  const [editForm, setEditForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    date: "",
+    time: "",
+    message: "",
+  });
+  const [isEditing, setIsEditing] = useState(false);
   const params = useParams();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [property, setProperty] = useState<Property | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isLiked, setIsLiked] = useState(false);
+  const { isFavorite, refreshFavorites } = useFavorites();
+  const [isFavoriting, setIsFavoriting] = useState(false);
   const [isAppointmentDialogOpen, setIsAppointmentDialogOpen] = useState(false);
   const [isRequestInfoDialogOpen, setIsRequestInfoDialogOpen] = useState(false); // New state for Request More Info dialog
   const [isFullScreenImageOpen, setIsFullScreenImageOpen] = useState(false);
@@ -64,14 +97,16 @@ export default function PropertyDetailPage() {
     time: "",
     message: "",
   });
+  const [isBooking, setIsBooking] = useState(false);
   const [requestInfoForm, setRequestInfoForm] = useState({
-    // New state for Request More Info form
     name: "",
     email: "",
     phone: "",
     message: "",
   });
   const [loading, setLoading] = useState(true);
+  // Loader for info request form
+  const [isRequestingInfo, setIsRequestingInfo] = useState(false);
   // Login prompt dialog state
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   // Helper for protected actions
@@ -82,6 +117,22 @@ export default function PropertyDetailPage() {
       action();
     }
   };
+
+  // Pre-fill appointment form with user info as soon as available
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      setAppointmentForm((prev) => ({
+        ...prev,
+        name: user.name || "",
+        email: user.email || "",
+      }));
+      setRequestInfoForm((prev) => ({
+        ...prev,
+        name: user.name || "",
+        email: user.email || "",
+      }));
+    }
+  }, [isAuthenticated, user]);
 
   useEffect(() => {
     async function fetchProperty() {
@@ -103,17 +154,119 @@ export default function PropertyDetailPage() {
       }
     }
     fetchProperty();
-  }, [params.id]);
+
+    // Fetch user's appointment for this property
+    async function fetchUserAppointment() {
+      if (!isAuthenticated) {
+        setUserAppointment(null);
+        return;
+      }
+      try {
+        const res = await fetch(
+          `http://localhost:5000/api/appointments/property/${params.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        if (res.ok) {
+          const appointment: Appointment = await res.json();
+          setUserAppointment(appointment);
+          // Pre-fill edit form with appointment data
+          // Convert ISO date to 'YYYY-MM-DD' for input type="date"
+          let formattedDate = "";
+          if (appointment.date) {
+            try {
+              formattedDate = new Date(appointment.date)
+                .toISOString()
+                .slice(0, 10);
+            } catch {
+              formattedDate = appointment.date;
+            }
+          }
+          setEditForm({
+            name: appointment.name || "",
+            email: appointment.email || "",
+            phone: appointment.phone || "",
+            date: formattedDate,
+            time: appointment.time || "",
+            message: appointment.message || "",
+          });
+        } else {
+          setUserAppointment(null);
+        }
+      } catch {
+        setUserAppointment(null);
+      }
+    }
+    fetchUserAppointment();
+  }, [params.id, isAuthenticated]);
+
+  const handleEditAppointmentSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!userAppointment) return;
+    setIsEditing(true);
+    fetch(`http://localhost:5000/api/appointments/${userAppointment._id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(editForm),
+    })
+      .then(async (res) => {
+        if (res.ok) {
+          const updated: Appointment = await res.json();
+          toast.success("Appointment updated successfully!");
+          setUserAppointment(updated);
+          setIsEditDialogOpen(false);
+        } else {
+          const error = await res.json();
+          toast.error(error?.message || "Failed to update appointment.");
+        }
+      })
+      .catch(() => {
+        toast.error("Network error. Please try again.");
+      })
+      .finally(() => {
+        setIsEditing(false);
+      });
+  };
+
+  // Cancel appointment handler
+  const [isCanceling, setIsCanceling] = useState(false);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const handleCancelAppointment = async () => {
+    if (!userAppointment) return;
+    setIsCanceling(true);
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/appointments/${userAppointment._id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (res.ok) {
+        toast.success("Appointment canceled successfully!");
+        setUserAppointment(null);
+      } else {
+        const error = await res.json();
+        toast.error(error?.message || "Failed to cancel appointment.");
+      }
+    } catch {
+      toast.error("Network error. Please try again.");
+    } finally {
+      setIsCanceling(false);
+      setShowCancelConfirm(false);
+    }
+  };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
-        <Header />
-        <div className="text-center text-lg text-gray-600">
-          Loading property...
-        </div>
-      </div>
-    );
+    return <LoadingPage />;
   }
 
   if (!property) {
@@ -167,37 +320,178 @@ export default function PropertyDetailPage() {
       toast.error("Please sign in to book an appointment");
       return;
     }
-
-    // Here you would typically send the appointment data to your backend
-    toast.success("Appointment booked successfully!");
-    setIsAppointmentDialogOpen(false);
-    setAppointmentForm({
-      name: "",
-      email: "",
-      phone: "",
-      date: "",
-      time: "",
-      message: "",
-    });
+    setIsBooking(true);
+    // Send appointment to backend
+    const appointmentData: any = {
+      name: appointmentForm.name,
+      email: appointmentForm.email,
+      phone: appointmentForm.phone,
+      date: appointmentForm.date,
+      time: appointmentForm.time,
+      propertyId: params.id,
+    };
+    if (appointmentForm.message && appointmentForm.message.trim() !== "") {
+      appointmentData.message = appointmentForm.message;
+    }
+    fetch("http://localhost:5000/api/appointments", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(appointmentData),
+    })
+      .then(async (res) => {
+        if (res.ok) {
+          toast.success("Appointment booked successfully!");
+          setIsAppointmentDialogOpen(false);
+          setAppointmentForm({
+            name: "",
+            email: "",
+            phone: "",
+            date: "",
+            time: "",
+            message: "",
+          });
+          // Re-fetch user appointment to update UI
+          try {
+            const res = await fetch(
+              `http://localhost:5000/api/appointments/property/${params.id}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+              }
+            );
+            if (res.ok) {
+              const appointment: Appointment = await res.json();
+              setUserAppointment(appointment);
+            } else {
+              setUserAppointment(null);
+            }
+          } catch {
+            setUserAppointment(null);
+          }
+        } else {
+          const error = await res.json();
+          toast.error(error?.message || "Failed to book appointment.");
+        }
+      })
+      .catch(() => {
+        toast.error("Network error. Please try again.");
+      })
+      .finally(() => {
+        setIsBooking(false);
+      });
   };
 
   const handleRequestInfoSubmit = (e: React.FormEvent) => {
-    // New submit handler for Request More Info
     e.preventDefault();
     if (!isAuthenticated) {
       toast.error("Please sign in to request more information");
       return;
     }
+    setIsRequestingInfo(true);
+    // Send info request to backend
+    const infoRequestData = {
+      propertyId: params.id,
+      message: requestInfoForm.message,
+    };
+    fetch("http://localhost:5000/api/requests", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(infoRequestData),
+    })
+      .then(async (res) => {
+        if (res.ok) {
+          toast.success("Your info request has been sent successfully!");
+          setIsRequestInfoDialogOpen(false);
+          setRequestInfoForm({
+            name: "",
+            email: "",
+            phone: "",
+            message: "",
+          });
+        } else {
+          const error = await res.json();
+          toast.error(error?.message || "Failed to send info request.");
+        }
+      })
+      .catch(() => {
+        toast.error("Network error. Please try again.");
+      })
+      .finally(() => {
+        setIsRequestingInfo(false);
+      });
+  };
 
-    // Here you would typically send the request info data to your backend
-    toast.success("Your request has been sent successfully!");
-    setIsRequestInfoDialogOpen(false);
-    setRequestInfoForm({
-      name: "",
-      email: "",
-      phone: "",
-      message: "",
-    });
+  // Add to favorites handler
+  const handleFavorite = async () => {
+    if (!isAuthenticated) {
+      setShowLoginPrompt(true);
+      return;
+    }
+    if (isFavoriting) return;
+    setIsFavoriting(true);
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/favorites/${params.id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (res.ok) {
+        toast.success("Property added to favorites!");
+        refreshFavorites();
+      } else {
+        const error = await res.json();
+        toast.error(error?.message || "Failed to add to favorites.");
+      }
+    } catch {
+      toast.error("Network error. Please try again.");
+    } finally {
+      setIsFavoriting(false);
+    }
+  };
+
+  // Remove from favorites handler
+  const handleUnsaveFavorite = async () => {
+    if (!isAuthenticated) {
+      setShowLoginPrompt(true);
+      return;
+    }
+    if (isFavoriting) return;
+    setIsFavoriting(true);
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/favorites/${params.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (res.ok) {
+        toast.success("Property removed from favorites!");
+        refreshFavorites();
+      } else {
+        const error = await res.json();
+        toast.error(error?.message || "Failed to remove from favorites.");
+      }
+    } catch {
+      toast.error("Network error. Please try again.");
+    } finally {
+      setIsFavoriting(false);
+      setShowUnsaveConfirm(false);
+    }
   };
 
   const handleShare = async () => {
@@ -298,25 +592,76 @@ export default function PropertyDetailPage() {
             </div>
 
             <div className="flex items-center space-x-3">
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={() => {
-                  if (!isAuthenticated) {
-                    setShowLoginPrompt(true);
-                  } else {
-                    setIsLiked(!isLiked);
-                  }
-                }}
-                className="border-red-200 hover:bg-red-50"
-              >
-                <Heart
-                  className={`h-5 w-5 mr-2 ${
-                    isLiked ? "fill-red-500 text-red-500" : "text-gray-600"
-                  }`}
-                />
-                {isLiked ? "Saved" : "Save"}
-              </Button>
+              {/* Favorite/Unsave Button with Confirmation Dialog */}
+              {isFavorite(property._id) ? (
+                <>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => setShowUnsaveConfirm(true)}
+                    className="border-red-200 hover:bg-red-50"
+                    disabled={isFavoriting}
+                  >
+                    <Heart className="h-5 w-5 mr-2 fill-red-500 text-red-500" />
+                    {isFavoriting ? (
+                      <span className="flex items-center justify-center">
+                        <span className="animate-spin mr-2 h-4 w-4 border-2 border-t-2 border-gray-300 border-t-red-600 rounded-full"></span>
+                        Removing...
+                      </span>
+                    ) : (
+                      "Saved"
+                    )}
+                  </Button>
+                  <Dialog
+                    open={showUnsaveConfirm}
+                    onOpenChange={setShowUnsaveConfirm}
+                  >
+                    <DialogContent className="max-w-sm">
+                      <DialogHeader>
+                        <DialogTitle>Remove from Favorites?</DialogTitle>
+                        <DialogDescription>
+                          Are you sure you want to remove this property from
+                          your favorites?
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="flex gap-2 mt-4">
+                        <Button
+                          variant="secondary"
+                          onClick={() => setShowUnsaveConfirm(false)}
+                          disabled={isFavoriting}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          onClick={handleUnsaveFavorite}
+                          disabled={isFavoriting}
+                        >
+                          {isFavoriting ? "Removing..." : "Remove"}
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={handleFavorite}
+                  className="border-red-200 hover:bg-red-50"
+                  disabled={isFavoriting}
+                >
+                  <Heart className="h-5 w-5 mr-2 text-gray-600" />
+                  {isFavoriting ? (
+                    <span className="flex items-center justify-center">
+                      <span className="animate-spin mr-2 h-4 w-4 border-2 border-t-2 border-gray-300 border-t-red-600 rounded-full"></span>
+                      Saving...
+                    </span>
+                  ) : (
+                    "Save"
+                  )}
+                </Button>
+              )}
               <Button
                 variant="outline"
                 size="lg"
@@ -681,128 +1026,358 @@ export default function PropertyDetailPage() {
                 <CardTitle className="text-xl">Schedule a Visit</CardTitle>
               </CardHeader>
               <CardContent>
-                <Dialog
-                  open={isAppointmentDialogOpen}
-                  onOpenChange={setIsAppointmentDialogOpen}
-                >
-                  <DialogTrigger asChild>
+                {userAppointment ? (
+                  <div className="flex flex-col items-center gap-2">
                     <Button
-                      className="w-full h-12 text-lg"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleProtectedAction(() =>
-                          setIsAppointmentDialogOpen(true)
-                        );
-                      }}
+                      className="w-full cursor-not-allowed h-12 text-lg"
+                      disabled
                     >
-                      <Calendar className="mr-3 h-5 w-5" />
-                      Book Appointment
+                      Appointment Booked
                     </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>Book an Appointment</DialogTitle>
-                    </DialogHeader>
-                    <form
-                      onSubmit={handleAppointmentSubmit}
-                      className="space-y-4"
+                    <div className="w-full flex gap-2">
+                      <Button
+                        variant="secondary"
+                        className="w-full bg-blue-600 text-white hover:bg-blue-700"
+                        onClick={() => setIsEditDialogOpen(true)}
+                      >
+                        Edit Appointment
+                      </Button>
+                      <AlertDialog
+                        open={showCancelConfirm}
+                        onOpenChange={setShowCancelConfirm}
+                      >
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="destructive"
+                            className="w-full"
+                            onClick={() => setShowCancelConfirm(true)}
+                            disabled={isCanceling}
+                          >
+                            Cancel Appointment
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Are you sure you want to cancel your appointment?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              We value your interest in this property! If
+                              something went wrong or you need help, please{" "}
+                              <span className="text-blue-600 font-semibold">
+                                contact our support team(+220 7595999 or +220
+                                3902798)
+                              </span>{" "}
+                              before canceling.
+                              <br />
+                              <br />
+                              Canceling your appointment means you may lose your
+                              reserved slot. Would you like to proceed?
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel disabled={isCanceling}>
+                              Keep Appointment
+                            </AlertDialogCancel>
+                            <AlertDialogAction asChild>
+                              <Button
+                                variant="destructive"
+                                className="w-full"
+                                onClick={handleCancelAppointment}
+                                disabled={isCanceling}
+                              >
+                                {isCanceling ? (
+                                  <span className="flex items-center justify-center">
+                                    <span className="animate-spin mr-2 h-4 w-4 border-2 border-t-2 border-gray-300 border-t-red-600 rounded-full"></span>
+                                    Canceling...
+                                  </span>
+                                ) : (
+                                  "Yes, Cancel Appointment"
+                                )}
+                              </Button>
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+
+                    <Dialog
+                      open={isEditDialogOpen}
+                      onOpenChange={setIsEditDialogOpen}
                     >
-                      <div>
-                        <Label htmlFor="appName">Full Name</Label>
-                        <Input
-                          id="appName"
-                          value={appointmentForm.name}
-                          onChange={(e) =>
-                            setAppointmentForm({
-                              ...appointmentForm,
-                              name: e.target.value,
-                            })
-                          }
-                          required
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="appEmail">Email</Label>
-                        <Input
-                          id="appEmail"
-                          type="email"
-                          value={appointmentForm.email}
-                          onChange={(e) =>
-                            setAppointmentForm({
-                              ...appointmentForm,
-                              email: e.target.value,
-                            })
-                          }
-                          required
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="appPhone">Phone</Label>
-                        <Input
-                          id="appPhone"
-                          type="tel"
-                          value={appointmentForm.phone}
-                          onChange={(e) =>
-                            setAppointmentForm({
-                              ...appointmentForm,
-                              phone: e.target.value,
-                            })
-                          }
-                          required
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="appDate">Date</Label>
-                          <Input
-                            id="appDate"
-                            type="date"
-                            value={appointmentForm.date}
-                            onChange={(e) =>
-                              setAppointmentForm({
-                                ...appointmentForm,
-                                date: e.target.value,
-                              })
-                            }
-                            required
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="appTime">Time</Label>
-                          <Input
-                            id="appTime"
-                            type="time"
-                            value={appointmentForm.time}
-                            onChange={(e) =>
-                              setAppointmentForm({
-                                ...appointmentForm,
-                                time: e.target.value,
-                              })
-                            }
-                            required
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <Label htmlFor="appMessage">Message (Optional)</Label>
-                        <Textarea
-                          id="appMessage"
-                          value={appointmentForm.message}
-                          onChange={(e) =>
-                            setAppointmentForm({
-                              ...appointmentForm,
-                              message: e.target.value,
-                            })
-                          }
-                          placeholder="Any specific requirements or questions..."
-                        />
-                      </div>
-                      <Button type="submit" className="w-full">
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>Edit Appointment</DialogTitle>
+                        </DialogHeader>
+                        <form
+                          onSubmit={handleEditAppointmentSubmit}
+                          className="space-y-4"
+                        >
+                          <div>
+                            <Label htmlFor="editName">Full Name</Label>
+                            <Input
+                              id="editName"
+                              value={editForm.name}
+                              onChange={(e) =>
+                                setEditForm({
+                                  ...editForm,
+                                  name: e.target.value,
+                                })
+                              }
+                              required
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="editEmail">Email</Label>
+                            <Input
+                              id="editEmail"
+                              type="email"
+                              value={editForm.email}
+                              onChange={(e) =>
+                                setEditForm({
+                                  ...editForm,
+                                  email: e.target.value,
+                                })
+                              }
+                              required
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="editPhone">Phone</Label>
+                            <Input
+                              id="editPhone"
+                              type="tel"
+                              value={editForm.phone}
+                              onChange={(e) =>
+                                setEditForm({
+                                  ...editForm,
+                                  phone: e.target.value,
+                                })
+                              }
+                              required
+                            />
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <Label htmlFor="editDate">Date</Label>
+                              <Input
+                                id="editDate"
+                                type="date"
+                                value={editForm.date}
+                                onChange={(e) =>
+                                  setEditForm({
+                                    ...editForm,
+                                    date: e.target.value,
+                                  })
+                                }
+                                required
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="editTime">Time</Label>
+                              <Input
+                                id="editTime"
+                                type="time"
+                                value={editForm.time}
+                                onChange={(e) =>
+                                  setEditForm({
+                                    ...editForm,
+                                    time: e.target.value,
+                                  })
+                                }
+                                required
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <Label htmlFor="editMessage">
+                              Message (Optional)
+                            </Label>
+                            <Textarea
+                              id="editMessage"
+                              value={editForm.message}
+                              onChange={(e) =>
+                                setEditForm({
+                                  ...editForm,
+                                  message: e.target.value,
+                                })
+                              }
+                              placeholder="Any specific requirements or questions..."
+                            />
+                          </div>
+                          <Button
+                            type="submit"
+                            className="w-full"
+                            disabled={isEditing}
+                          >
+                            {isEditing ? (
+                              <span className="flex items-center justify-center">
+                                <span className="animate-spin mr-2 h-4 w-4 border-2 border-t-2 border-gray-300 border-t-blue-600 rounded-full"></span>
+                                Saving...
+                              </span>
+                            ) : (
+                              "Save Changes"
+                            )}
+                          </Button>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                ) : (
+                  /* Optionally show appointment details here */
+                  <Dialog
+                    open={isAppointmentDialogOpen}
+                    onOpenChange={(open) => {
+                      setIsAppointmentDialogOpen(open);
+                      if (open && isAuthenticated && user) {
+                        setAppointmentForm((prev) => ({
+                          ...prev,
+                          name: user.name || "",
+                          email: user.email || "",
+                        }));
+                      }
+                      if (!open) {
+                        // Reset only phone, date, time, message when closing dialog, keep name/email from user
+                        setAppointmentForm((prev) => ({
+                          ...prev,
+                          phone: "",
+                          date: "",
+                          time: "",
+                          message: "",
+                        }));
+                      }
+                    }}
+                  >
+                    <DialogTrigger asChild>
+                      <Button
+                        className="w-full h-12 text-lg"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleProtectedAction(() =>
+                            setIsAppointmentDialogOpen(true)
+                          );
+                        }}
+                      >
+                        <Calendar color="white" className="mr-3 h-5 w-5" />
                         Book Appointment
                       </Button>
-                    </form>
-                  </DialogContent>
-                </Dialog>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Book an Appointment</DialogTitle>
+                      </DialogHeader>
+                      <form
+                        onSubmit={handleAppointmentSubmit}
+                        className="space-y-4"
+                      >
+                        <div>
+                          <Label htmlFor="appName">Full Name</Label>
+                          <Input
+                            id="appName"
+                            value={appointmentForm.name}
+                            onChange={(e) =>
+                              setAppointmentForm({
+                                ...appointmentForm,
+                                name: e.target.value,
+                              })
+                            }
+                            required
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="appEmail">Email</Label>
+                          <Input
+                            id="appEmail"
+                            type="email"
+                            value={appointmentForm.email}
+                            onChange={(e) =>
+                              setAppointmentForm({
+                                ...appointmentForm,
+                                email: e.target.value,
+                              })
+                            }
+                            required
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="appPhone">Phone</Label>
+                          <Input
+                            id="appPhone"
+                            type="tel"
+                            value={appointmentForm.phone}
+                            onChange={(e) =>
+                              setAppointmentForm({
+                                ...appointmentForm,
+                                phone: e.target.value,
+                              })
+                            }
+                            required
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="appDate">Date</Label>
+                            <Input
+                              id="appDate"
+                              type="date"
+                              value={appointmentForm.date}
+                              onChange={(e) =>
+                                setAppointmentForm({
+                                  ...appointmentForm,
+                                  date: e.target.value,
+                                })
+                              }
+                              required
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="appTime">Time</Label>
+                            <Input
+                              id="appTime"
+                              type="time"
+                              value={appointmentForm.time}
+                              onChange={(e) =>
+                                setAppointmentForm({
+                                  ...appointmentForm,
+                                  time: e.target.value,
+                                })
+                              }
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <Label htmlFor="appMessage">Message (Optional)</Label>
+                          <Textarea
+                            id="appMessage"
+                            value={appointmentForm.message}
+                            onChange={(e) =>
+                              setAppointmentForm({
+                                ...appointmentForm,
+                                message: e.target.value,
+                              })
+                            }
+                            placeholder="Any specific requirements or questions..."
+                          />
+                        </div>
+                        <Button
+                          type="submit"
+                          className="w-full"
+                          disabled={isBooking}
+                        >
+                          {isBooking ? (
+                            <span className="flex items-center justify-center">
+                              <span className="animate-spin mr-2 h-4 w-4 border-2 border-t-2 border-gray-300 border-t-blue-600 rounded-full"></span>
+                              Booking...
+                            </span>
+                          ) : (
+                            "Book Appointment"
+                          )}
+                        </Button>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+                )}
               </CardContent>
             </Card>
 
@@ -814,7 +1389,23 @@ export default function PropertyDetailPage() {
               <CardContent>
                 <Dialog
                   open={isRequestInfoDialogOpen}
-                  onOpenChange={setIsRequestInfoDialogOpen}
+                  onOpenChange={(open) => {
+                    setIsRequestInfoDialogOpen(open);
+                    if (open && isAuthenticated && user) {
+                      setRequestInfoForm((prev) => ({
+                        ...prev,
+                        name: user.name || "",
+                        email: user.email || "",
+                      }));
+                    }
+                    if (!open) {
+                      setRequestInfoForm((prev) => ({
+                        ...prev,
+                        phone: "",
+                        message: "",
+                      }));
+                    }
+                  }}
                 >
                   <DialogTrigger asChild>
                     <Button
@@ -929,8 +1520,19 @@ export default function PropertyDetailPage() {
                           placeholder="I would like more information about this property..."
                         />
                       </div>
-                      <Button type="submit" className="w-full">
-                        Send Request
+                      <Button
+                        type="submit"
+                        className="w-full"
+                        disabled={isRequestingInfo}
+                      >
+                        {isRequestingInfo ? (
+                          <span className="flex items-center justify-center">
+                            <span className="animate-spin mr-2 h-4 w-4 border-2 border-t-2 border-gray-300 border-t-blue-600 rounded-full"></span>
+                            Sending...
+                          </span>
+                        ) : (
+                          "Send Request"
+                        )}
                       </Button>
                     </form>
                   </DialogContent>

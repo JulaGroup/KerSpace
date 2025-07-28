@@ -101,7 +101,7 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-[80vh] bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div className="min-h-[100vh] bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 shadow-2xl rounded-3xl overflow-hidden bg-white backdrop-blur-sm">
         {/* Form Section */}
         <div className="flex flex-col justify-center px-8 sm:px-12 lg:px-12 py-4 lg:py-4 relative">

@@ -3,42 +3,34 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Menu, X, ChevronDown, Heart, LogOut, Home } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  Menu,
+  X,
+  ChevronDown,
+  Heart,
+  LogOut,
+  Home,
+  Calendar,
+} from "lucide-react";
 import { Button } from "./ui/button";
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [userInitials, setUserInitials] = useState<string | null>(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { user, isAuthenticated, logout } = useAuth();
+  const userInitials = user?.name
+    ? user.name
+        .split(" ")
+        .map((n: string) => n[0])
+        .join("")
+        .toUpperCase()
+    : null;
+  const isAdmin = user?.role === "admin";
   const pathname = usePathname();
   const router = useRouter();
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token");
-      if (token) {
-        try {
-          const payload = JSON.parse(atob(token.split(".")[1]));
-          if (payload.name) {
-            const initials = payload.name
-              .split(" ")
-              .map((n: string) => n[0])
-              .join("")
-              .toUpperCase();
-            setUserInitials(initials);
-          }
-          setIsAdmin(payload.role === "admin");
-        } catch (e) {
-          setUserInitials(null);
-          setIsAdmin(false);
-        }
-      } else {
-        setUserInitials(null);
-        setIsAdmin(false);
-      }
-    }
-  }, []);
+  // Removed localStorage-based auth logic; now using AuthContext
 
   useEffect(() => {
     const onScroll = () => {
@@ -97,7 +89,7 @@ export function Header() {
 
           {/* Desktop User Section */}
           <div className="hidden lg:flex items-center space-x-4">
-            {userInitials ? (
+            {isAuthenticated ? (
               <div className="user-menu-container relative">
                 <button
                   className="flex items-center space-x-2 px-3 py-2 rounded-full bg-gray-50 hover:bg-gray-100 transition-all duration-200 group"
@@ -119,6 +111,14 @@ export function Header() {
                 {showUserMenu && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-2 animate-in fade-in-0 zoom-in-95">
                     <Link
+                      href="/appointments"
+                      className="flex items-center space-x-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors duration-150"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      <Calendar className="w-4 h-4" />
+                      <span className="text-sm font-medium">Appointments</span>
+                    </Link>
+                    <Link
                       href="/favorites"
                       className="flex items-center space-x-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors duration-150"
                       onClick={() => setShowUserMenu(false)}
@@ -130,8 +130,7 @@ export function Header() {
                     <button
                       className="flex items-center space-x-3 w-full px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors duration-150"
                       onClick={() => {
-                        localStorage.removeItem("token");
-                        setUserInitials(null);
+                        logout();
                         setShowUserMenu(false);
                         router.push("/");
                       }}
@@ -181,7 +180,7 @@ export function Header() {
             <MobileNavItem href="/contact" label="Contact" />
 
             <div className="pt-4 border-t border-gray-100 mt-4">
-              {userInitials ? (
+              {isAuthenticated ? (
                 <div className="space-y-2">
                   <div className="flex items-center space-x-3 px-4 py-2">
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white text-sm font-semibold">
@@ -228,8 +227,7 @@ export function Header() {
                   <button
                     className="flex items-center space-x-3 w-full px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg mx-2 transition-colors duration-150"
                     onClick={() => {
-                      localStorage.removeItem("token");
-                      setUserInitials(null);
+                      logout();
                       setIsMobileMenuOpen(false);
                       router.push("/");
                     }}

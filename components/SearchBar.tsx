@@ -37,7 +37,8 @@ export function SearchBar({ className, onSearch }: SearchBarProps) {
       // Navigate to listings page with filters
       const params = new URLSearchParams();
       Object.entries(filters).forEach(([key, value]) => {
-        if (value) params.set(key, value);
+        if (value !== undefined && value !== "")
+          params.set(key, value.toString());
       });
       router.push(`/listings?${params.toString()}`);
     }
@@ -88,7 +89,11 @@ export function SearchBar({ className, onSearch }: SearchBarProps) {
           </SelectContent>
         </Select>
 
-        <Button onClick={handleSearch} className="w-full">
+        <Button
+          onClick={handleSearch}
+          disabled={!location && !type && !status}
+          className="w-full"
+        >
           <Search className="mr-2 h-4 w-4" />
           Search
         </Button>

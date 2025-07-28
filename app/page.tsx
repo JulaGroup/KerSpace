@@ -118,7 +118,7 @@ export default function HomePage() {
             <p className="text-xl sm:text-2xl text-blue-100 font-medium mb-2">
               Find your space. Live your story
             </p>
-            <p className="text-lg sm:text-xl text-blue-200/80 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-xl text-blue-100  max-w-3xl mx-auto leading-relaxed">
               Revolutionizing real estate in The Gambia and West Africa with
               modern technology, local expertise, and unmatched transparency.
             </p>
@@ -141,7 +141,9 @@ export default function HomePage() {
           {/* Enhanced Search Bar */}
           <div className="w-full">
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-2xl">
-              <SearchBar />
+              <SearchBar
+              // No onSearch prop needed; SearchBar handles navigation
+              />
             </div>
           </div>
         </div>

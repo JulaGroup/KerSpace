@@ -32,36 +32,60 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
-    // Mock authentication - in real app, this would call your API
-    const mockUsers = [
-      {
-        id: "1",
-        email: "user@demo.com",
-        name: "John Doe",
-        role: "user" as UserRole,
-      },
-      {
-        id: "2",
-        email: "vendor@demo.com",
-        name: "Jane Smith",
-        role: "vendor" as UserRole,
-      },
-      {
-        id: "3",
-        email: "admin@demo.com",
-        name: "Admin User",
-        role: "admin" as UserRole,
-      },
-    ];
-
-    const foundUser = mockUsers.find((u) => u.email === email);
-    if (foundUser && password === "demo123") {
-      setUser(foundUser);
-      router.push("/dashboard"); // Redirect to admin dashboard for admin users
-      return true;
+  // Hydrate user from JWT in localStorage on initial load and when token changes
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          // Decode JWT payload
+          const payload = JSON.parse(atob(token.split(".")[1]));
+          setUser({
+            id: payload.id || "",
+            email: payload.email,
+            name: payload.name,
+            role: payload.role,
+          });
+        } catch (e) {
+          setUser(null);
+        }
+      } else {
+        setUser(null);
+      }
     }
-    return false;
+  }, []);
+
+  const login = async (email: string, password: string): Promise<boolean> => {
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      if (!res.ok) return false;
+      const data = await res.json();
+      if (data && data.token) {
+        localStorage.setItem("token", data.token);
+        // Decode JWT payload
+        const payload = JSON.parse(atob(data.token.split(".")[1]));
+        setUser({
+          id: payload.id || "",
+          email: payload.email,
+          name: payload.name,
+          role: payload.role,
+        });
+        // Redirect based on role
+        if (payload.role === "admin") {
+          router.push("/dashboard");
+        } else {
+          router.push("/");
+        }
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
   };
 
   const register = async (
@@ -70,19 +94,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     name: string,
     role: UserRole = "user"
   ): Promise<boolean> => {
-    // Mock registration
-    const newUser = {
-      id: Date.now().toString(),
-      email,
-      name,
-      role,
-    };
-    setUser(newUser);
-    return true;
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, name, role }),
+      });
+      if (!res.ok) return false;
+      const data = await res.json();
+      if (data && data.token) {
+        localStorage.setItem("token", data.token);
+        // Decode JWT payload
+        const payload = JSON.parse(atob(data.token.split(".")[1]));
+        setUser({
+          id: payload.id || "",
+          email: payload.email,
+          name: payload.name,
+          role: payload.role,
+        });
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
   };
 
   const logout = () => {
     setUser(null);
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("token");
+    }
   };
 
   return (

@@ -88,7 +88,7 @@ export function Header() {
                 <DropdownMenuItem
                   onClick={() => {
                     localStorage.removeItem("token");
-                    router.push("/login");
+                    router.push("/");
                   }}
                 >
                   Logout
