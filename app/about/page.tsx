@@ -13,6 +13,7 @@ import {
   Heart,
   CheckCircle,
 } from "lucide-react";
+import Image from "next/image";
 
 export default function AboutPage() {
   const stats = [
@@ -82,7 +83,7 @@ export default function AboutPage() {
               About KërSpace: Your Partner in Property
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto mb-10 leading-relaxed animate-fade-in-up delay-200">
-              We're revolutionizing the real estate industry by connecting
+              We&apos;re revolutionizing the real estate industry by connecting
               buyers, sellers, and renters through innovative technology and
               unparalleled personalized service.
             </p>
@@ -147,9 +148,9 @@ export default function AboutPage() {
                 decisions through innovative technology and expert guidance.
               </p>
               <p className="text-lg text-gray-700 mb-8 leading-relaxed">
-                Whether you're buying your first home, selling a property, or
-                looking for the perfect rental, we're here to make your real
-                estate journey smooth and successful, providing unwavering
+                Whether you&apos;re buying your first home, selling a property,
+                or looking for the perfect rental, we&apos;re here to make your
+                real estate journey smooth and successful, providing unwavering
                 support from start to finish.
               </p>
               <Link href="/listings" passHref>
@@ -161,8 +162,10 @@ export default function AboutPage() {
             <div className="relative h-96 rounded-2xl overflow-hidden shadow-xl">
               {" "}
               {/* Rounded corners, stronger shadow */}
-              <img
-                src="https://images.pexels.com/photos/280222/pexels-photo-280222.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" // Higher res image
+              <Image
+                width={800}
+                height={600}
+                src="/about.jpg"
                 alt="Modern office building"
                 className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" // Subtle hover zoom
               />
@@ -217,55 +220,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-      {/* Team Section */}
-      <section className="py-20 md:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Meet Our Expert Team
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Our dedicated professionals bring a wealth of experience and a
-              passion for real estate, ensuring exceptional service and results.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 items-center justify-items-center">
-            {" "}
-            {team.map((member, index) => (
-              <Card
-                key={index}
-                className="text-center p-8 shadow-xl rounded-2xl bg-white hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300"
-              >
-                {" "}
-                {/* Consistent card styling */}
-                <CardContent className="flex flex-col items-center p-0">
-                  <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-6 border-4 border-blue-100 shadow-md">
-                    {" "}
-                    {/* Larger, bordered image */}
-                    <img
-                      src={member.image}
-                      alt={member.name}
-                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-110" // Hover zoom on image
-                    />
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-1">
-                    {member.name}
-                  </h3>
-                  <p className="text-blue-700 font-semibold mb-4 text-lg">
-                    {" "}
-                    {/* Stronger blue for role */}
-                    {member.role}
-                  </p>
-                  <p className="text-gray-600 leading-relaxed text-base">
-                    {member.bio}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
       {/* CTA Section */}
       <section className="py-16 md:py-20 bg-gradient-to-r from-blue-600 to-blue-800">
         {" "}
@@ -301,6 +255,63 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+      {/* Footer */}
+      <footer className="bg-gray-900 text-gray-400 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <h3 className="font-semibold mb-4 text-white">KërSpace</h3>
+            <p className="text-gray-400">
+              Your trusted partner in finding and selling properties in The
+              Gambia and beyond.
+            </p>
+          </div>
+          <div>
+            <h3 className="font-semibold mb-4 text-white">Quick Links</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/" className="hover:text-white">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link href="/listings" className="hover:text-white">
+                  Listings
+                </Link>
+              </li>
+              <li>
+                <Link href="/services" className="hover:text-white">
+                  Services
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="hover:text-white">
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-white">
+                  Contact
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="font-semibold mb-4 text-white">Contact Info</h3>
+            <ul className="space-y-2">
+              <li>+220 123 4567</li>
+              <li>info@KërSpace.com</li>
+              <li>
+                456 Real Estate Blvd
+                <br />
+                Banjul, The Gambia
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500">
+          &copy; 2024 KërSpace. All rights reserved.
+        </div>
+      </footer>
     </div>
   );
 }

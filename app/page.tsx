@@ -21,8 +21,9 @@ import {
   Globe,
   PlayCircle,
 } from "lucide-react";
-import { IllustrationCard } from "@/components/IllustrationCards";
+import { useRouter } from "next/navigation";
 import axios from "axios";
+import { IllustrationCard } from "@/components/IllustrationCards";
 
 export default function HomePage() {
   const [featuredProperties, setFeaturedProperties] = useState<Property[]>([]);
@@ -86,6 +87,7 @@ export default function HomePage() {
     },
   ];
 
+  const router = useRouter();
   return (
     <div className="min-h-screen bg-gray-50 mt-8">
       <Header />
@@ -243,32 +245,40 @@ export default function HomePage() {
             <IllustrationCard
               title="Buy a Home"
               description="Find a place to call yours with verified listings and expert guidance."
-              link="/buy"
               illustration="/illustrations/buy.svg"
+              onClick={() =>
+                router.push("/listings?type=house&status=for-sale")
+              }
+              style={{ cursor: "pointer" }}
             />
 
             {/* Rent a Home */}
             <IllustrationCard
               title="Rent a Home"
               description="Browse rentals across The Gambia and West Africa with ease."
-              link="/rent"
               illustration="/illustrations/rent.svg"
+              onClick={() =>
+                router.push("/listings?type=house&status=for-rent")
+              }
+              style={{ cursor: "pointer" }}
             />
 
             {/* Sell a Home */}
             <IllustrationCard
               title="Sell a Home"
               description="List your property with confidence and reach the right buyers."
-              link="/sell"
               illustration="/illustrations/sell.svg"
+              onClick={() => router.push("/contact")}
+              style={{ cursor: "pointer" }}
             />
 
             {/* Buy Land */}
             <IllustrationCard
               title="Buy Land"
               description="Explore investment-ready land plots verified and documented."
-              link="/land"
               illustration="/illustrations/land.svg"
+              onClick={() => router.push("/listings?type=land")}
+              style={{ cursor: "pointer" }}
             />
           </div>
         </div>
