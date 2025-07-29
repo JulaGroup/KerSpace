@@ -604,6 +604,7 @@ export default function ListingsPage() {
   // When Search button is clicked, update filters (triggers search)
   const applyFilters = () => {
     setFilters(pendingFilters);
+    setIsFilterOpen(false); // Close mobile filter sidebar after search
   };
 
   const clearFilters = () => {

@@ -153,47 +153,51 @@ export default function HomePage() {
 
       {/* Stats Section - your detailed version */}
       <section className="py-10 bg-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 text-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-row flex-wrap sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-12 text-center justify-center">
           {/* Properties */}
-          <div>
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl shadow-lg bg-gradient-to-tr from-blue-500 to-purple-600 mb-6 mx-auto">
-              <Building className="h-10 w-10 text-white" />
+          <div className="flex-1 min-w-[120px]">
+            <div className="inline-flex items-center justify-center w-14 h-14 sm:w-20 sm:h-20 rounded-3xl shadow-lg bg-gradient-to-tr from-blue-500 to-purple-600 mb-4 sm:mb-6 mx-auto">
+              <Building className="h-7 w-7 sm:h-10 sm:w-10 text-white" />
             </div>
-            <h3 className="text-4xl font-extrabold text-gray-900 mb-2">
+            <h3 className="text-2xl sm:text-4xl font-extrabold text-gray-900 mb-1 sm:mb-2">
               1,200+
             </h3>
-            <p className="text-lg text-gray-600">Properties</p>
+            <p className="text-base sm:text-lg text-gray-600">Properties</p>
           </div>
 
           {/* Happy Clients */}
-          <div>
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl shadow-lg bg-gradient-to-tr from-purple-500 to-pink-600 mb-6 mx-auto">
-              <Users className="h-10 w-10 text-white" />
+          <div className="flex-1 min-w-[120px]">
+            <div className="inline-flex items-center justify-center w-14 h-14 sm:w-20 sm:h-20 rounded-3xl shadow-lg bg-gradient-to-tr from-purple-500 to-pink-600 mb-4 sm:mb-6 mx-auto">
+              <Users className="h-7 w-7 sm:h-10 sm:w-10 text-white" />
             </div>
-            <h3 className="text-4xl font-extrabold text-gray-900 mb-2">
+            <h3 className="text-2xl sm:text-4xl font-extrabold text-gray-900 mb-1 sm:mb-2">
               5,000+
             </h3>
-            <p className="text-lg text-gray-600">Happy Clients</p>
+            <p className="text-base sm:text-lg text-gray-600">Happy Clients</p>
           </div>
 
           {/* Client Rating */}
-          <div>
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl shadow-lg bg-gradient-to-tr from-pink-500 to-red-600 mb-6 mx-auto">
-              <Star className="h-10 w-10 text-white" />
+          <div className="flex-1 min-w-[120px]">
+            <div className="inline-flex items-center justify-center w-14 h-14 sm:w-20 sm:h-20 rounded-3xl shadow-lg bg-gradient-to-tr from-pink-500 to-red-600 mb-4 sm:mb-6 mx-auto">
+              <Star className="h-7 w-7 sm:h-10 sm:w-10 text-white" />
             </div>
-            <h3 className="text-4xl font-extrabold text-gray-900 mb-2">
+            <h3 className="text-2xl sm:text-4xl font-extrabold text-gray-900 mb-1 sm:mb-2">
               4.9/5
             </h3>
-            <p className="text-lg text-gray-600">Client Rating</p>
+            <p className="text-base sm:text-lg text-gray-600">Client Rating</p>
           </div>
 
           {/* Years Experience */}
-          <div>
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl shadow-lg bg-gradient-to-tr from-green-500 to-teal-600 mb-6 mx-auto">
-              <TrendingUp className="h-10 w-10 text-white" />
+          <div className="flex-1 min-w-[120px]">
+            <div className="inline-flex items-center justify-center w-14 h-14 sm:w-20 sm:h-20 rounded-3xl shadow-lg bg-gradient-to-tr from-green-500 to-teal-600 mb-4 sm:mb-6 mx-auto">
+              <TrendingUp className="h-7 w-7 sm:h-10 sm:w-10 text-white" />
             </div>
-            <h3 className="text-4xl font-extrabold text-gray-900 mb-2">15+</h3>
-            <p className="text-lg text-gray-600">Years Experience</p>
+            <h3 className="text-2xl sm:text-4xl font-extrabold text-gray-900 mb-1 sm:mb-2">
+              15+
+            </h3>
+            <p className="text-base sm:text-lg text-gray-600">
+              Years Experience
+            </p>
           </div>
         </div>
       </section>
@@ -366,55 +370,62 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-400 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <h3 className="font-semibold mb-4 text-white">KërSpace</h3>
-            <p className="text-gray-400">
-              Your trusted partner in finding and selling properties in The
-              Gambia and beyond.
-            </p>
-          </div>
-          <div>
-            <h3 className="font-semibold mb-4 text-white">Quick Links</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/" className="hover:text-white">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link href="/listings" className="hover:text-white">
-                  Listings
-                </Link>
-              </li>
-              <li>
-                <Link href="/services" className="hover:text-white">
-                  Services
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="hover:text-white">
-                  About
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="hover:text-white">
-                  Contact
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="font-semibold mb-4 text-white">Contact Info</h3>
-            <ul className="space-y-2">
-              <li>+220 123 4567</li>
-              <li>info@KërSpace.com</li>
-              <li>
-                456 Real Estate Blvd
-                <br />
-                Banjul, The Gambia
-              </li>
-            </ul>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* On mobile: KërSpace on top, then links/info side by side. On md+: 3 columns */}
+          <div className="flex flex-col md:grid md:grid-cols-3 gap-8">
+            {/* KërSpace section always on top on mobile, left on desktop */}
+            <div className="mb-8 md:mb-0">
+              <h3 className="font-semibold mb-4 text-white">KërSpace</h3>
+              <p className="text-gray-400">
+                Your trusted partner in finding and selling properties in The
+                Gambia and beyond.
+              </p>
+            </div>
+            {/* Quick Links and Contact Info side by side on mobile, stacked on desktop */}
+            <div className="flex flex-row gap-8 justify-between md:flex-col md:gap-0 md:justify-start col-span-2">
+              <div>
+                <h3 className="font-semibold mb-4 text-white">Quick Links</h3>
+                <ul className="space-y-2">
+                  <li>
+                    <Link href="/" className="hover:text-white">
+                      Home
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/listings" className="hover:text-white">
+                      Listings
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/services" className="hover:text-white">
+                      Services
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/about" className="hover:text-white">
+                      About
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/contact" className="hover:text-white">
+                      Contact
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="font-semibold mb-4 text-white">Contact Info</h3>
+                <ul className="space-y-2">
+                  <li>+220 123 4567</li>
+                  <li>info@KërSpace.com</li>
+                  <li>
+                    456 Real Estate Blvd
+                    <br />
+                    Banjul, The Gambia
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500">
