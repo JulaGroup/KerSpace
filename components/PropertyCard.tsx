@@ -39,20 +39,47 @@ export function PropertyCard({
   };
 
   const getStatusBadge = () => {
-    const isForSale = property.status === "for-sale";
-    return (
-      <Badge
-        variant={isForSale ? "default" : "secondary"}
-        className={cn(
-          "absolute top-3 left-3 z-10",
-          isForSale
-            ? "bg-green-600 hover:bg-green-700"
-            : "bg-blue-600 hover:bg-blue-700"
-        )}
-      >
-        {isForSale ? "For Sale" : "For Rent"}
-      </Badge>
-    );
+    // Show Sold, Fully Booked, or Available
+    if (property.type === "apartment") {
+      if (property.availableUnits === 0) {
+        return (
+          <Badge className="absolute top-3 left-3 z-10 bg-red-600 hover:bg-red-700 text-white">
+            Fully Booked
+          </Badge>
+        );
+      } else {
+        return (
+          <Badge className="absolute top-3 left-3 z-10 bg-green-600 hover:bg-green-700 text-white">{`Available Units: ${
+            property.availableUnits ?? "-"
+          }`}</Badge>
+        );
+      }
+    } else if (property.available === false) {
+      return (
+        <Badge className="absolute top-3 left-3 z-10 bg-red-600 hover:bg-red-700 text-white">
+          Sold / Unavailable
+        </Badge>
+      );
+    } else {
+      // For non-apartment: show both availability and status badges side by side
+      const isForSale = property.status === "for-sale";
+      return (
+        <div className="absolute top-3 left-3 z-10 flex gap-2">
+          <Badge
+            className={cn(
+              isForSale
+                ? "bg-green-600 hover:bg-green-700 text-white"
+                : "bg-blue-600 hover:bg-blue-700 text-white"
+            )}
+          >
+            {isForSale ? "For Sale" : "For Rent"}
+          </Badge>
+          <Badge className="bg-green-600 hover:bg-green-700 text-white">
+            Available
+          </Badge>
+        </div>
+      );
+    }
   };
 
   return (
@@ -151,6 +178,21 @@ export function PropertyCard({
                 <Square className="h-4 w-4 mr-1" />
                 <span>{property.size} m²</span>
               </div>
+              {/* Apartment unit info */}
+              {property.type === "apartment" && (
+                <>
+                  <div className="flex items-center">
+                    <span className="font-semibold text-blue-700 ml-2">
+                      Units: {property.totalUnits ?? "-"}
+                    </span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="font-semibold text-green-700 ml-2">
+                      Available: {property.availableUnits ?? "-"}
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
 
             <p className="text-sm text-gray-600 line-clamp-2">

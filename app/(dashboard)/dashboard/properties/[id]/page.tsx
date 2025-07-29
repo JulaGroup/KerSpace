@@ -40,6 +40,10 @@ interface Property {
     state?: string;
     country?: string;
     phone?: string;
+    coordinates?: {
+      lat?: number;
+      lng?: number;
+    };
   };
   price: number;
   bedrooms: number;
@@ -53,6 +57,9 @@ interface Property {
   description?: string;
   status?: string;
   type?: string;
+  available?: boolean;
+  totalUnits?: number;
+  availableUnits?: number;
 }
 
 export default function SpecificProperty() {
@@ -453,6 +460,34 @@ export default function SpecificProperty() {
                     sx={{ fontWeight: 600, borderRadius: 2 }}
                   />
                 )}
+                {/* Availability logic */}
+                {property.type === "apartment" ? (
+                  property.availableUnits === 0 ? (
+                    <Chip
+                      label="Fully Booked"
+                      color="error"
+                      sx={{ fontWeight: 600, borderRadius: 2 }}
+                    />
+                  ) : (
+                    <Chip
+                      label={`Available Units: ${property.availableUnits ?? "-"}`}
+                      color="success"
+                      sx={{ fontWeight: 600, borderRadius: 2 }}
+                    />
+                  )
+                ) : property.available === false ? (
+                  <Chip
+                    label="Sold / Unavailable"
+                    color="error"
+                    sx={{ fontWeight: 600, borderRadius: 2 }}
+                  />
+                ) : (
+                  <Chip
+                    label="Available"
+                    color="success"
+                    sx={{ fontWeight: 600, borderRadius: 2 }}
+                  />
+                )}
                 {property.status && (
                   <Chip
                     icon={<SellIcon />}
@@ -628,51 +663,37 @@ export default function SpecificProperty() {
                 gap={3}
                 mb={4}
               >
-                {[
-                  {
-                    icon: BedIcon,
-                    label: "Bedrooms",
-                    value: property.bedrooms,
-                  },
-                  {
-                    icon: BathtubIcon,
-                    label: "Bathrooms",
-                    value: property.bathrooms,
-                  },
-                  {
-                    icon: SquareFootIcon,
-                    label: "Size (m²)",
-                    value: property.size,
-                  },
-                ].map((feature, idx) => (
-                  <Card
-                    key={idx}
-                    sx={(theme) => ({
-                      p: 2,
-                      textAlign: "center",
-                      background: alpha(theme.palette.primary.main, 0.05),
-                      border: `1px solid ${alpha(
-                        theme.palette.primary.main,
-                        0.1
-                      )}`,
-                      borderRadius: 2,
-                    })}
-                  >
-                    <feature.icon
-                      sx={(theme) => ({
-                        color: theme.palette.primary.main,
-                        fontSize: 28,
-                        mb: 1,
-                      })}
-                    />
-                    <Typography variant="h6" fontWeight={700}>
-                      {feature.value}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {feature.label}
-                    </Typography>
-                  </Card>
-                ))}
+                {/* Standard features */}
+                <Card sx={(theme) => ({ p: 2, textAlign: "center", background: alpha(theme.palette.primary.main, 0.05), border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`, borderRadius: 2 })}>
+                  <BedIcon sx={(theme) => ({ color: theme.palette.primary.main, fontSize: 28, mb: 1 })} />
+                  <Typography variant="h6" fontWeight={700}>{property.bedrooms}</Typography>
+                  <Typography variant="caption" color="text.secondary">Bedrooms</Typography>
+                </Card>
+                <Card sx={(theme) => ({ p: 2, textAlign: "center", background: alpha(theme.palette.primary.main, 0.05), border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`, borderRadius: 2 })}>
+                  <BathtubIcon sx={(theme) => ({ color: theme.palette.primary.main, fontSize: 28, mb: 1 })} />
+                  <Typography variant="h6" fontWeight={700}>{property.bathrooms}</Typography>
+                  <Typography variant="caption" color="text.secondary">Bathrooms</Typography>
+                </Card>
+                <Card sx={(theme) => ({ p: 2, textAlign: "center", background: alpha(theme.palette.primary.main, 0.05), border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`, borderRadius: 2 })}>
+                  <SquareFootIcon sx={(theme) => ({ color: theme.palette.primary.main, fontSize: 28, mb: 1 })} />
+                  <Typography variant="h6" fontWeight={700}>{property.size}</Typography>
+                  <Typography variant="caption" color="text.secondary">Size (m²)</Typography>
+                </Card>
+                {/* Apartment-specific features */}
+                {property.type === "apartment" && (
+                  <>
+                    <Card sx={(theme) => ({ p: 2, textAlign: "center", background: alpha(theme.palette.primary.main, 0.05), border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`, borderRadius: 2 })}>
+                      <HomeIcon sx={(theme) => ({ color: theme.palette.primary.main, fontSize: 28, mb: 1 })} />
+                      <Typography variant="h6" fontWeight={700}>{property.totalUnits ?? "-"}</Typography>
+                      <Typography variant="caption" color="text.secondary">Total Units</Typography>
+                    </Card>
+                    <Card sx={(theme) => ({ p: 2, textAlign: "center", background: alpha(theme.palette.primary.main, 0.05), border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`, borderRadius: 2 })}>
+                      <HomeIcon sx={(theme) => ({ color: theme.palette.success.main, fontSize: 28, mb: 1 })} />
+                      <Typography variant="h6" fontWeight={700}>{property.availableUnits ?? "-"}</Typography>
+                      <Typography variant="caption" color="text.secondary">Available Units</Typography>
+                    </Card>
+                  </>
+                )}
               </Box>
 
               {/* Divider */}

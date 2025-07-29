@@ -21,6 +21,10 @@ export interface Property {
   };
   images?: string[];
   featured?: boolean;
+  available?: boolean;
+  totalUnits?: number;
+  availableUnits?: number;
+  approvalStatus?: "pending" | "approved" | "rejected";
   createdAt?: Date;
   updatedAt?: Date;
 }

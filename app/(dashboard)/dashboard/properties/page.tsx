@@ -16,11 +16,11 @@ import {
 
 // MODIFIED: Changed 'id' to '_id' to match backend and PropertyList component
 type Property = {
-  _id?: string; // Change 'id' to '_id'
+  _id?: string;
   title: string;
   address: string;
   city: string;
-  status: string;
+  status: "for-sale" | "for-rent";
   price: string;
   state?: string;
   country?: string;
@@ -29,11 +29,17 @@ type Property = {
   lat?: string;
   lng?: string;
   phone?: string;
-  type: string;
+  type: "house" | "apartment" | "office" | "land";
   bedrooms: string;
   bathrooms: string;
   size: string;
   images: string[];
+  available?: boolean;
+  totalUnits?: string;
+  availableUnits?: string;
+  approvalStatus?: "pending" | "approved" | "rejected";
+  createdAt?: Date;
+  updatedAt?: Date;
 };
 
 const emptyProperty: Property = {
@@ -49,11 +55,17 @@ const emptyProperty: Property = {
   lat: "",
   lng: "",
   phone: "",
-  type: "",
+  type: "apartment",
   bedrooms: "",
   bathrooms: "",
   size: "",
   images: [],
+  available: true,
+  totalUnits: "",
+  availableUnits: "",
+  approvalStatus: "pending",
+  createdAt: undefined,
+  updatedAt: undefined,
 };
 
 export default function PropertiesPage() {
@@ -75,7 +87,7 @@ export default function PropertiesPage() {
         const apiProp = res.data;
         // Map API response to form shape
         const safeProperty: Property = {
-          _id: apiProp._id, // Ensure this maps to _id
+          _id: apiProp._id,
           title: apiProp.title || "",
           address: apiProp.location?.address || "",
           city: apiProp.location?.city || "",
@@ -93,6 +105,17 @@ export default function PropertiesPage() {
           bathrooms: apiProp.bathrooms?.toString() || "",
           size: apiProp.size?.toString() || "",
           images: Array.isArray(apiProp.images) ? apiProp.images : [],
+          available:
+            typeof apiProp.available === "boolean" ? apiProp.available : true,
+          totalUnits: apiProp.totalUnits?.toString() || "",
+          availableUnits: apiProp.availableUnits?.toString() || "",
+          approvalStatus: apiProp.approvalStatus || "pending",
+          createdAt: apiProp.createdAt
+            ? new Date(apiProp.createdAt)
+            : undefined,
+          updatedAt: apiProp.updatedAt
+            ? new Date(apiProp.updatedAt)
+            : undefined,
         };
         setEditingProperty(safeProperty);
         setFormProperty(safeProperty);
@@ -146,7 +169,7 @@ export default function PropertiesPage() {
     try {
       const urls = await handleImageUpload();
       const token = localStorage.getItem("token");
-      const payload = {
+      const payload: any = {
         title: formProperty.title,
         status: formProperty.status,
         description: formProperty.description,
@@ -166,7 +189,19 @@ export default function PropertiesPage() {
         size: Number(formProperty.size),
         images: urls,
         featured: formProperty.featured, // Add featured to payload
+        available:
+          typeof formProperty.available === "boolean"
+            ? formProperty.available
+            : true,
       };
+      if (formProperty.type === "apartment") {
+        payload.totalUnits = formProperty.totalUnits
+          ? Number(formProperty.totalUnits)
+          : undefined;
+        payload.availableUnits = formProperty.availableUnits
+          ? Number(formProperty.availableUnits)
+          : undefined;
+      }
 
       // MODIFIED: Use editingProperty._id
       if (editingProperty?._id) {
@@ -249,9 +284,21 @@ export default function PropertiesPage() {
                   name="type"
                   title="Property Type"
                   value={formProperty.type}
-                  onChange={(e) =>
-                    setFormProperty({ ...formProperty, type: e.target.value })
-                  }
+                  onChange={(e) => {
+                    const newType = e.target.value as
+                      | "house"
+                      | "apartment"
+                      | "office"
+                      | "land";
+                    let updated = { ...formProperty, type: newType };
+                    // Reset apartment fields if not apartment
+                    if (newType !== "apartment") {
+                      updated.totalUnits = undefined;
+                      updated.availableUnits = undefined;
+                      updated.available = formProperty.available ?? true;
+                    }
+                    setFormProperty(updated);
+                  }}
                   required
                   className="w-full p-3 rounded-md bg-zinc-800 text-white border border-zinc-700"
                 >
@@ -268,9 +315,12 @@ export default function PropertiesPage() {
                 <select
                   name="status"
                   title="Property Status"
-                  value={(formProperty as any).status || ""}
+                  value={formProperty.status}
                   onChange={(e) =>
-                    setFormProperty({ ...formProperty, status: e.target.value })
+                    setFormProperty({
+                      ...formProperty,
+                      status: e.target.value as "for-sale" | "for-rent",
+                    })
                   }
                   required
                   className="w-full p-3 rounded-md bg-zinc-800 text-white border border-zinc-700"
@@ -279,6 +329,32 @@ export default function PropertiesPage() {
                   <option value="for-sale">For Sale</option>
                   <option value="for-rent">For Rent</option>
                 </select>
+              </div>
+
+              {/* Available toggle for all, but disabled for apartments (auto) */}
+              <div>
+                <label htmlFor="available" className="text-sm text-gray-300">
+                  Available
+                </label>
+                <input
+                  id="available"
+                  name="available"
+                  type="checkbox"
+                  checked={formProperty.available ?? true}
+                  disabled={formProperty.type === "apartment"}
+                  onChange={(e) =>
+                    setFormProperty({
+                      ...formProperty,
+                      available: e.target.checked,
+                    })
+                  }
+                  className="accent-blue-600 w-5 h-5 mt-2"
+                />
+                {formProperty.type === "apartment" && (
+                  <span className="text-xs text-gray-400 ml-2">
+                    Auto-calculated from available units
+                  </span>
+                )}
               </div>
             </div>
 
@@ -310,6 +386,49 @@ export default function PropertiesPage() {
                   />
                 </div>
               ))}
+              {/* Apartment-specific fields */}
+              {formProperty.type === "apartment" && (
+                <>
+                  <div>
+                    <label className="text-sm text-gray-300">Total Units</label>
+                    <input
+                      type="number"
+                      placeholder="e.g., 10"
+                      value={formProperty.totalUnits ?? ""}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setFormProperty((prev) => ({
+                          ...prev,
+                          totalUnits: val === "" ? undefined : val,
+                        }));
+                      }}
+                      required
+                      className="w-full p-3 rounded-md bg-zinc-800 text-white border border-zinc-700"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-300">
+                      Available Units
+                    </label>
+                    <input
+                      type="number"
+                      placeholder="e.g., 5"
+                      value={formProperty.availableUnits ?? ""}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        const num = val === "" ? undefined : Number(val);
+                        setFormProperty((prev) => ({
+                          ...prev,
+                          availableUnits: val === "" ? undefined : val,
+                          available: val === "0" ? false : true,
+                        }));
+                      }}
+                      required
+                      className="w-full p-3 rounded-md bg-zinc-800 text-white border border-zinc-700"
+                    />
+                  </div>
+                </>
+              )}
             </div>
 
             {/* --- Location --- */}

@@ -574,12 +574,24 @@ export default function PropertyDetailPage() {
                   }
                   className={`${
                     property.status === "for-sale"
-                      ? "bg-emerald-600 hover:bg-emerald-700"
-                      : "bg-blue-600 hover:bg-blue-700"
+                      ? "bg-emerald-600"
+                      : "bg-blue-600"
                   } text-white px-3 py-1`}
                 >
                   {property.status === "for-sale" ? "For Sale" : "For Rent"}
                 </Badge>
+                {/* Availability Chip - always visible, strong bg */}
+                <span
+                  className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ml-1
+                    ${
+                      property.available
+                        ? "bg-emerald-600 text-white"
+                        : "bg-red-600 text-white"
+                    }
+                  `}
+                >
+                  {property.available ? "Available" : "Not Available"}
+                </span>
                 {property.featured && (
                   <Badge
                     variant="outline"
@@ -914,8 +926,8 @@ export default function PropertyDetailPage() {
                     }
                     className={
                       property.status === "for-sale"
-                        ? "bg-emerald-600"
-                        : "bg-blue-600"
+                        ? "bg-emerald-600 text-white"
+                        : "bg-blue-600 text-white"
                     }
                   >
                     {property.status === "for-sale" ? "For Sale" : "For Rent"}

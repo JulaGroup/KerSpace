@@ -21,22 +21,37 @@ type Property = {
   title: string;
   address: string;
   city: string;
-  status: string;
+  status: "for-sale" | "for-rent";
   price: string;
+  // state?: string;
+  // country?: string;
   location: {
-    address: string;
-    city: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+    coordinates?: {
+      lat?: number;
+      lng?: number;
+    };
+    phone?: string;
   };
   featured?: boolean;
   description?: string;
-  lat?: string;
-  lng?: string;
+  // lat?: string;
+  // lng?: string;
   phone?: string;
-  type: string;
+  type: "house" | "apartment" | "office" | "land";
   bedrooms: string;
   bathrooms: string;
   size: string;
   images: string[];
+  available?: boolean;
+  totalUnits?: string;
+  availableUnits?: string;
+  approvalStatus?: "pending" | "approved" | "rejected";
+  createdAt?: Date;
+  updatedAt?: Date;
 };
 
 interface PropertyListProps {
