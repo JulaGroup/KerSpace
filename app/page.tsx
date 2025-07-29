@@ -370,61 +370,60 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-400 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* On mobile: KërSpace on top, then links/info side by side. On md+: 3 columns */}
-          <div className="flex flex-col md:grid md:grid-cols-3 gap-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8 max-w-none">
+          {/* On mobile: KërSpace on top, then links/info stacked. On md+: 3 columns, with Quick Links and Contact Info side by side */}
+          <div className="flex flex-col md:flex-row gap-8 w-full">
             {/* KërSpace section always on top on mobile, left on desktop */}
-            <div className="mb-8 md:mb-0">
+            <div className="flex-1 mb-8 md:mb-0">
               <h3 className="font-semibold mb-4 text-white">KërSpace</h3>
               <p className="text-gray-400">
                 Your trusted partner in finding and selling properties in The
                 Gambia and beyond.
               </p>
             </div>
-            {/* Quick Links and Contact Info side by side on mobile, stacked on desktop */}
-            <div className="flex flex-row gap-8 justify-between md:flex-col md:gap-0 md:justify-start col-span-2">
-              <div>
-                <h3 className="font-semibold mb-4 text-white">Quick Links</h3>
-                <ul className="space-y-2">
-                  <li>
-                    <Link href="/" className="hover:text-white">
-                      Home
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/listings" className="hover:text-white">
-                      Listings
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/services" className="hover:text-white">
-                      Services
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/about" className="hover:text-white">
-                      About
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/contact" className="hover:text-white">
-                      Contact
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="font-semibold mb-4 text-white">Contact Info</h3>
-                <ul className="space-y-2">
-                  <li>+220 123 4567</li>
-                  <li>info@KërSpace.com</li>
-                  <li>
-                    456 Real Estate Blvd
-                    <br />
-                    Banjul, The Gambia
-                  </li>
-                </ul>
-              </div>
+            {/* Quick Links */}
+            <div className="flex-1">
+              <h3 className="font-semibold mb-4 text-white">Quick Links</h3>
+              <ul className="space-y-2">
+                <li>
+                  <Link href="/" className="hover:text-white">
+                    Home
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/listings" className="hover:text-white">
+                    Listings
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/services" className="hover:text-white">
+                    Services
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/about" className="hover:text-white">
+                    About
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/contact" className="hover:text-white">
+                    Contact
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            {/* Contact Info */}
+            <div className="flex-1">
+              <h3 className="font-semibold mb-4 text-white">Contact Info</h3>
+              <ul className="space-y-2">
+                <li>+220 123 4567</li>
+                <li>info@KërSpace.com</li>
+                <li>
+                  456 Real Estate Blvd
+                  <br />
+                  Banjul, The Gambia
+                </li>
+              </ul>
             </div>
           </div>
         </div>
