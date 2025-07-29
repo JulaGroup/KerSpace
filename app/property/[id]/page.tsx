@@ -284,6 +284,29 @@ export default function PropertyDetailPage() {
             </p>
             <Button asChild className="mt-4">
               <Link href="/listings">
+                {/* 360° Virtual Tour (Coming Soon) */}
+                <Card className="shadow-lg border-0">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="flex items-center text-2xl">
+                      <Video className="h-6 w-6 mr-3 text-blue-600" />
+                      360° Virtual Tour
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="aspect-video bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl flex items-center justify-center min-h-[200px]">
+                      <div className="text-center">
+                        <Video className="h-16 w-16 text-blue-600 mx-auto mb-4" />
+                        <p className="text-gray-700 mb-4 text-lg font-medium">
+                          Feature coming soon
+                        </p>
+                        <span className="text-gray-500 text-sm">
+                          You&apos;ll be able to explore this property in 360°
+                          soon.
+                        </span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Listings
               </Link>
@@ -675,7 +698,7 @@ export default function PropertyDetailPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             {/* Image Gallery */}
@@ -855,101 +878,6 @@ export default function PropertyDetailPage() {
                     <div className="text-sm text-gray-600 mb-1">Area</div>
                     <div className="font-bold text-gray-900 text-lg">
                       {property.size} m²
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Virtual Tour */}
-            {/* Assuming property.virtualTourUrl exists if you want to display this section */}
-            {/*
-            {property.virtualTourUrl && (
-              <Card className="shadow-lg border-0">
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center text-2xl">
-                    <Video className="h-6 w-6 mr-3 text-blue-600" />
-                    Virtual Tour
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="aspect-video bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl flex items-center justify-center">
-                    <div className="text-center">
-                      <Video className="h-16 w-16 text-blue-600 mx-auto mb-4" />
-                      <p className="text-gray-700 mb-4 text-lg font-medium">
-                        Experience this property in 360°
-                      </p>
-                      <Button size="lg" asChild>
-                        <a
-                          href={property.virtualTourUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center"
-                        >
-                          <Video className="mr-2 h-5 w-5" />
-                          Start Virtual Tour
-                        </a>
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-            */}
-
-            {/* Location */}
-            <Card className="shadow-lg border-0">
-              <CardHeader>
-                <CardTitle className="flex items-center text-2xl">
-                  <MapPin className="h-6 w-6 mr-3 text-blue-600" />
-                  Location & Neighborhood
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="aspect-video bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl flex items-center justify-center mb-6">
-                  <div className="text-center">
-                    <MapPin className="h-16 w-16 text-emerald-600 mx-auto mb-4" />
-                    <p className="text-gray-700 text-lg font-medium">
-                      Interactive Map
-                    </p>
-                    <p className="text-gray-500">Coming soon</p>
-                  </div>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="p-6 bg-gray-50 rounded-xl">
-                    <h4 className="font-bold text-gray-900 mb-3 text-lg">
-                      Address
-                    </h4>
-                    <p className="text-gray-600 leading-relaxed">
-                      {property.location.address}
-                      <br />
-                      {property.location.city},{" "}
-                      {property.location.state &&
-                        `${property.location.state}, `}
-                      {property.location.country}
-                    </p>
-                  </div>
-
-                  <div className="p-6 bg-gray-50 rounded-xl">
-                    <h4 className="font-bold text-gray-900 mb-3 text-lg">
-                      Property Details
-                    </h4>
-                    <div className="space-y-2 text-gray-600">
-                      <div className="flex items-center">
-                        <Calendar className="h-4 w-4 mr-2" />
-                        <span>
-                          Listed{" "}
-                          {new Date(property.createdAt!).toLocaleDateString()}
-                        </span>
-                      </div>
-                      {/* <div className="flex items-center">
-                        <Clock className="h-4 w-4 mr-2" />
-                        <span>
-                          Updated{" "}
-                          {new Date(property.updatedAt).toLocaleDateString()}
-                        </span>
-                      </div> */}
                     </div>
                   </div>
                 </div>
@@ -1540,6 +1468,88 @@ export default function PropertyDetailPage() {
               </CardContent>
             </Card>
           </div>
+        </div>
+        <div className="flex flex-col lg:flex-row gap-3 sm:gap-6 w-full">
+          {/* Virtual Tour */}
+          <Card className="shadow-lg border-0 w-full lg:w-1/2 flex-shrink-0 min-w-0">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center text-2xl">
+                <Video className="h-6 w-6 mr-3 text-blue-600" />
+                360° Virtual Tour
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="aspect-video bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl flex items-center justify-center min-h-[200px]">
+                <div className="text-center">
+                  <Video className="h-16 w-16 text-blue-600 mx-auto mb-4" />
+                  <p className="text-gray-700 mb-4 text-lg font-medium">
+                    Feature coming soon
+                  </p>
+                  <span className="text-gray-500 text-sm">
+                    You&apos;ll be able to explore this property in 360° soon.
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Location */}
+          <Card className="shadow-lg border-0 w-full lg:w-1/2 flex-shrink-0 min-w-0">
+            <CardHeader>
+              <CardTitle className="flex items-center text-2xl">
+                <MapPin className="h-6 w-6 mr-3 text-blue-600" />
+                Location & Neighborhood
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="aspect-video bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl flex items-center justify-center mb-6">
+                <div className="text-center">
+                  <MapPin className="h-16 w-16 text-emerald-600 mx-auto mb-4" />
+                  <p className="text-gray-700 text-lg font-medium">
+                    Interactive Map
+                  </p>
+                  <p className="text-gray-500">Coming soon</p>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="p-6 bg-gray-50 rounded-xl">
+                  <h4 className="font-bold text-gray-900 mb-3 text-lg">
+                    Address
+                  </h4>
+                  <p className="text-gray-600 leading-relaxed">
+                    {property.location.address}
+                    <br />
+                    {property.location.city},{" "}
+                    {property.location.state && `${property.location.state}, `}
+                    {property.location.country}
+                  </p>
+                </div>
+
+                <div className="p-6 bg-gray-50 rounded-xl">
+                  <h4 className="font-bold text-gray-900 mb-3 text-lg">
+                    Property Details
+                  </h4>
+                  <div className="space-y-2 text-gray-600">
+                    <div className="flex items-center">
+                      <Calendar className="h-4 w-4 mr-2" />
+                      <span>
+                        Listed{" "}
+                        {new Date(property.createdAt!).toLocaleDateString()}
+                      </span>
+                    </div>
+                    {/* <div className="flex items-center">
+                        <Clock className="h-4 w-4 mr-2" />
+                        <span>
+                          Updated{" "}
+                          {new Date(property.updatedAt).toLocaleDateString()}
+                        </span>
+                      </div> */}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
