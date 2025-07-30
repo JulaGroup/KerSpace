@@ -60,7 +60,7 @@ export function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-out ${
+      className={`w-full z-50 transition-all duration-500 ease-out ${
         scrolled
           ? "bg-white/95 backdrop-blur-xl shadow-lg border-b border-gray-100"
           : "bg-white/80 backdrop-blur-md"

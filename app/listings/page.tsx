@@ -7,6 +7,7 @@ import { PropertyCard } from "@/components/PropertyCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -22,213 +23,217 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Badge } from "@/components/ui/badge";
 import { Property, PropertyFilters } from "@/types/property";
-import { Filter, Search, MapPin, SlidersHorizontal } from "lucide-react";
+import {
+  Filter,
+  Search,
+  MapPin,
+  SlidersHorizontal,
+  X,
+  Home,
+  Building,
+  ArrowRight,
+  Sparkles,
+  Grid3X3,
+  List,
+  TrendingUp,
+} from "lucide-react";
 import axios from "axios";
 import { SkeletonPropertyCard } from "@/components/dashboard/SkeletonPropertyCard";
 
-// Moved FilterSidebar outside to keep the main component cleaner
-const FilterSidebar = ({
-  filters,
-  updateFilter,
-  clearFilters,
-  activeFilterCount,
-  applyFilters,
-}: {
+type FilterSidebarProps = {
   filters: PropertyFilters;
   updateFilter: (key: keyof PropertyFilters, value: any) => void;
   clearFilters: () => void;
   activeFilterCount: number;
   applyFilters: () => void;
-}) => (
-  <div className="bg-white rounded-xl shadow-lg p-5 mb-6 border border-gray-100">
-    <h2 className="text-lg font-semibold text-gray-900 mb-5 flex items-center">
-      <Filter className="mr-3 h-5 w-5 text-gray-700" />
-      Refine Your Search
-      {activeFilterCount > 0 && (
-        <Badge className="ml-3 px-3 py-1 text-sm font-medium rounded-full bg-blue-500 text-white">
-          {activeFilterCount}
-        </Badge>
-      )}
-    </h2>
-    {/* Main filter row for large screens */}
-    <div className="hidden lg:flex items-end flex-wrap justify-between gap-x-8 gap-y-4">
-      {/* Location */}
-      <div className="flex-1 min-w-[160px] space-y-1">
-        {/* ...existing code... */}
-        <Label htmlFor="location" className="text-sm font-medium text-gray-700">
-          Location
-        </Label>
-        <div className="relative">
-          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            id="location"
-            placeholder="City, State, or Address"
-            value={filters.location || ""}
-            onChange={(e) => updateFilter("location", e.target.value)}
-            className="pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 h-9 w-full"
-          />
-        </div>
+  isMobile?: boolean;
+};
+
+export const FilterSidebar = ({
+  filters,
+  updateFilter,
+  clearFilters,
+  activeFilterCount,
+  applyFilters,
+  isMobile = false,
+}: FilterSidebarProps) => {
+  const inputSizeClass =
+    "border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm h-9";
+
+  const renderSelect = (
+    label: string,
+    value: any,
+    onChange: (value: string) => void,
+    placeholder: string,
+    options: { label: string; value: string }[]
+  ) => (
+    <div className="flex-1 min-w-[120px] space-y-1">
+      <Label className="text-sm font-medium text-gray-700">{label}</Label>
+      <Select value={value} onValueChange={onChange}>
+        <SelectTrigger className={inputSizeClass}>
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          {options.map((opt) => (
+            <SelectItem key={opt.value} value={opt.value}>
+              {opt.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+
+  return (
+    <div
+      className={`bg-white rounded-xl shadow-lg p-5 border border-gray-100 ${
+        isMobile ? "" : "mb-6"
+      }`}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+          <Filter className="mr-2 h-5 w-5 text-gray-700" />
+          Refine Your Search
+        </h2>
+        {activeFilterCount > 0 && (
+          <Badge className="px-3 py-1 text-sm rounded-full bg-blue-600 text-white">
+            {activeFilterCount} Active
+          </Badge>
+        )}
       </div>
 
-      {/* Type */}
-      <div className="flex-1 min-w-[140px] space-y-1">
-        <Label className="text-sm font-medium text-gray-700">
-          Property Type
-        </Label>
-        <Select
-          value={filters.type || "all-types"}
-          onValueChange={(value) =>
-            updateFilter("type", value === "all-types" ? undefined : value)
-          }
-        >
-          <SelectTrigger className="w-full border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 h-9 text-sm">
-            <SelectValue placeholder="All Types" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all-types">All Types</SelectItem>
-            <SelectItem value="house">House</SelectItem>
-            <SelectItem value="apartment">Apartment</SelectItem>
-            <SelectItem value="office">Office</SelectItem>
-            <SelectItem value="land">Land</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      {filters.type !== "land" && (
-        <>
-          {/* Status */}
-          <div className="flex-1 min-w-[120px] space-y-1">
-            <Label className="text-sm font-medium text-gray-700">Status</Label>
-            <Select
-              value={filters.status || "all-status"}
-              onValueChange={(value) =>
-                updateFilter(
-                  "status",
-                  value === "all-status" ? undefined : value
-                )
-              }
-            >
-              <SelectTrigger className="w-full border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 h-9 text-sm">
-                <SelectValue placeholder="All" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all-status">All</SelectItem>
-                <SelectItem value="for-sale">For Sale</SelectItem>
-                <SelectItem value="for-rent">For Rent</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </>
-      )}
-      {/* Hide Bedrooms and Bathrooms if type is 'land' or 'office' */}
-      {filters.type !== "land" && filters.type !== "office" && (
-        <>
-          {/* Bedrooms */}
-          <div className="flex-1 min-w-[100px] space-y-1">
-            <Label className="text-sm font-medium text-gray-700">
-              Bedrooms
-            </Label>
-            <Select
-              value={filters.bedrooms?.toString() || "any"}
-              onValueChange={(value) =>
-                updateFilter(
-                  "bedrooms",
-                  value === "any" ? undefined : Number(value)
-                )
-              }
-            >
-              <SelectTrigger className="w-full border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 h-9 text-sm">
-                <SelectValue placeholder="Any" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="any">Any</SelectItem>
-                <SelectItem value="1">1+</SelectItem>
-                <SelectItem value="2">2+</SelectItem>
-                <SelectItem value="3">3+</SelectItem>
-                <SelectItem value="4">4+</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Bathrooms */}
-          <div className="flex-1 min-w-[100px] space-y-1">
-            <Label className="text-sm font-medium text-gray-700">
-              Bathrooms
-            </Label>
-            <Select
-              value={filters.bathrooms?.toString() || "any"}
-              onValueChange={(value) =>
-                updateFilter(
-                  "bathrooms",
-                  value === "any" ? undefined : Number(value)
-                )
-              }
-            >
-              <SelectTrigger className="w-full border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 h-9 text-sm">
-                <SelectValue placeholder="Any" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="any">Any</SelectItem>
-                <SelectItem value="1">1+</SelectItem>
-                <SelectItem value="2">2+</SelectItem>
-                <SelectItem value="3">3+</SelectItem>
-                <SelectItem value="4">4+</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </>
-      )}
-      {/* Size Range */}
-      <div className="flex-1 min-w-[180px]">
-        {" "}
-        {/* Adjusted min-width for the pair */}
-        <div className="space-y-1">
+      {/* Filters Grid */}
+      <div
+        className={`${
+          isMobile
+            ? "grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4"
+            : "hidden lg:flex items-end flex-wrap gap-6"
+        }`}
+      >
+        {/* Location */}
+        <div className="flex-1 min-w-[160px] space-y-1">
           <Label
-            htmlFor="sizeMin"
+            htmlFor="location"
             className="text-sm font-medium text-gray-700"
           >
-            Size (m²)
+            Location
           </Label>
-          <div className="grid grid-cols-2 gap-3">
-            {" "}
-            {/* Internal grid for min/max */}
+          <div className="relative">
+            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
-              id="sizeMin"
+              id="location"
+              placeholder="City, Area, or Landmark"
+              value={filters.location || ""}
+              onChange={(e) => updateFilter("location", e.target.value)}
+              className={`pl-10 ${inputSizeClass} w-full`}
+            />
+          </div>
+        </div>
+
+        {/* Type */}
+        {renderSelect(
+          "Property Type",
+          filters.type || "all-types",
+          (value) =>
+            updateFilter("type", value === "all-types" ? undefined : value),
+          "All Types",
+          [
+            { label: "All Types", value: "all-types" },
+            { label: "House", value: "house" },
+            { label: "Apartment", value: "apartment" },
+            { label: "Office", value: "office" },
+            { label: "Land", value: "land" },
+          ]
+        )}
+
+        {/* Status */}
+        {filters.type !== "land" &&
+          renderSelect(
+            "Status",
+            filters.status || "all-status",
+            (value) =>
+              updateFilter(
+                "status",
+                value === "all-status" ? undefined : value
+              ),
+            "All Status",
+            [
+              { label: "All", value: "all-status" },
+              { label: "For Sale", value: "for-sale" },
+              { label: "For Rent", value: "for-rent" },
+            ]
+          )}
+
+        {/* Bedrooms */}
+        {filters.type !== "land" &&
+          filters.type !== "office" &&
+          renderSelect(
+            "Bedrooms",
+            filters.bedrooms?.toString() || "any",
+            (value) =>
+              updateFilter(
+                "bedrooms",
+                value === "any" ? undefined : Number(value)
+              ),
+            "Any",
+            ["any", "1", "2", "3", "4"].map((val) => ({
+              label: val === "any" ? "Any" : `${val}+`,
+              value: val,
+            }))
+          )}
+
+        {/* Bathrooms */}
+        {filters.type !== "land" &&
+          filters.type !== "office" &&
+          renderSelect(
+            "Bathrooms",
+            filters.bathrooms?.toString() || "any",
+            (value) =>
+              updateFilter(
+                "bathrooms",
+                value === "any" ? undefined : Number(value)
+              ),
+            "Any",
+            ["any", "1", "2", "3", "4"].map((val) => ({
+              label: val === "any" ? "Any" : `${val}+`,
+              value: val,
+            }))
+          )}
+
+        {/* Size Range */}
+        <div className="flex-1 min-w-[180px] space-y-1">
+          <Label className="text-sm font-medium text-gray-700">Size (m²)</Label>
+          <div className="grid grid-cols-2 gap-3">
+            <Input
               type="number"
               placeholder="Min"
               value={filters.sizeMin || ""}
               onChange={(e) =>
                 updateFilter("sizeMin", Number(e.target.value) || undefined)
               }
-              className="border w-full border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 h-9 text-sm"
+              className={inputSizeClass}
             />
             <Input
-              id="sizeMax"
               type="number"
               placeholder="Max"
               value={filters.sizeMax || ""}
               onChange={(e) =>
                 updateFilter("sizeMax", Number(e.target.value) || undefined)
               }
-              className="border w-full border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 h-9 text-sm"
+              className={inputSizeClass}
             />
           </div>
         </div>
-      </div>
 
-      {/* Price Range */}
-      <div className="flex-1 min-w-[180px]">
-        <div className="space-y-1">
-          <Label
-            htmlFor="priceMin"
-            className="text-sm font-medium text-gray-700"
-          >
-            Price Range (GMD)
+        {/* Price Range */}
+        <div className="flex-1 min-w-[180px] space-y-1">
+          <Label className="text-sm font-medium text-gray-700">
+            Price (GMD)
           </Label>
           <div className="grid grid-cols-2 gap-3">
             <Input
-              id="priceMin"
               type="text"
               placeholder="Min"
               value={
@@ -241,10 +246,9 @@ const FilterSidebar = ({
                 const num = Number(raw);
                 updateFilter("priceMin", isNaN(num) ? undefined : num);
               }}
-              className="border w-full border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 h-9 text-sm"
+              className={inputSizeClass}
             />
             <Input
-              id="priceMax"
               type="text"
               placeholder="Max"
               value={
@@ -257,251 +261,20 @@ const FilterSidebar = ({
                 const num = Number(raw);
                 updateFilter("priceMax", isNaN(num) ? undefined : num);
               }}
-              className="border w-full border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 h-9 text-sm"
+              className={inputSizeClass}
             />
           </div>
         </div>
       </div>
 
       {/* Action Buttons */}
-      <div className="pt-5 flex gap-3">
-        <Button
-          variant="default"
-          onClick={applyFilters}
-          disabled={Object.values(filters).filter(Boolean).length === 0}
-          className="rounded-full text-sm px-6 py-2 bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200 h-9"
-        >
-          Search
-        </Button>
-        <Button
-          variant="outline"
-          onClick={clearFilters}
-          className="rounded-full text-sm px-6 py-2 border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors duration-200 h-9"
-        >
-          Clear Filters
-        </Button>
-      </div>
-    </div>
-
-    {/* Mobile/Tablet Filter Sidebar (scrollable) */}
-    <div className="lg:hidden overflow-y-auto flex flex-col">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 flex-1 overflow-y-auto">
-        {/* Location */}
-        <div className="space-y-1">
-          <Label
-            htmlFor="location"
-            className="text-sm font-medium text-gray-700"
-          >
-            Location
-          </Label>
-          <div className="relative">
-            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
-              id="location"
-              placeholder="City, State, or Address"
-              value={filters.location || ""}
-              onChange={(e) => updateFilter("location", e.target.value)}
-              className="pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 h-9 w-full"
-            />
-          </div>
-        </div>
-        {/* Property Type */}
-        <div className="space-y-1">
-          <Label className="text-sm font-medium text-gray-700">
-            Property Type
-          </Label>
-          <Select
-            value={filters.type || "all-types"}
-            onValueChange={(value) =>
-              updateFilter("type", value === "all-types" ? undefined : value)
-            }
-          >
-            <SelectTrigger className="w-full border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 h-9 text-sm">
-              <SelectValue placeholder="All Types" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all-types">All Types</SelectItem>
-              <SelectItem value="house">House</SelectItem>
-              <SelectItem value="apartment">Apartment</SelectItem>
-              <SelectItem value="office">Office</SelectItem>
-              <SelectItem value="land">Land</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        {/* Status */}
-        {filters.type !== "land" && (
-          <div className="space-y-1">
-            <Label className="text-sm font-medium text-gray-700">Status</Label>
-            <Select
-              value={filters.status || "all-status"}
-              onValueChange={(value) =>
-                updateFilter(
-                  "status",
-                  value === "all-status" ? undefined : value
-                )
-              }
-            >
-              <SelectTrigger className="w-full border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 h-9 text-sm">
-                <SelectValue placeholder="All" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all-status">All</SelectItem>
-                <SelectItem value="for-sale">For Sale</SelectItem>
-                <SelectItem value="for-rent">For Rent</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        )}
-        {/* Bedrooms & Bathrooms */}
-        {filters.type !== "land" && filters.type !== "office" && (
-          <>
-            <div className="space-y-1">
-              <Label className="text-sm font-medium text-gray-700">
-                Bedrooms
-              </Label>
-              <Select
-                value={filters.bedrooms?.toString() || "any"}
-                onValueChange={(value) =>
-                  updateFilter(
-                    "bedrooms",
-                    value === "any" ? undefined : Number(value)
-                  )
-                }
-              >
-                <SelectTrigger className="w-full border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 h-9 text-sm">
-                  <SelectValue placeholder="Any" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="any">Any</SelectItem>
-                  <SelectItem value="1">1+</SelectItem>
-                  <SelectItem value="2">2+</SelectItem>
-                  <SelectItem value="3">3+</SelectItem>
-                  <SelectItem value="4">4+</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1">
-              <Label className="text-sm font-medium text-gray-700">
-                Bathrooms
-              </Label>
-              <Select
-                value={filters.bathrooms?.toString() || "any"}
-                onValueChange={(value) =>
-                  updateFilter(
-                    "bathrooms",
-                    value === "any" ? undefined : Number(value)
-                  )
-                }
-              >
-                <SelectTrigger className="w-full border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 h-9 text-sm">
-                  <SelectValue placeholder="Any" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="any">Any</SelectItem>
-                  <SelectItem value="1">1+</SelectItem>
-                  <SelectItem value="2">2+</SelectItem>
-                  <SelectItem value="3">3+</SelectItem>
-                  <SelectItem value="4">4+</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </>
-        )}
-        {/* Size Range */}
-        <div className="space-y-1">
-          <Label
-            htmlFor="sizeMin"
-            className="text-sm font-medium text-gray-700"
-          >
-            Min Size (m²)
-          </Label>
-          <Input
-            id="sizeMin"
-            type="number"
-            placeholder="0"
-            value={filters.sizeMin || ""}
-            onChange={(e) =>
-              updateFilter("sizeMin", Number(e.target.value) || undefined)
-            }
-            className="border w-full border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 h-9 text-sm"
-          />
-        </div>
-        <div className="space-y-1">
-          <Label
-            htmlFor="sizeMax"
-            className="text-sm font-medium text-gray-700"
-          >
-            Max Size (m²)
-          </Label>
-          <Input
-            id="sizeMax"
-            type="number"
-            placeholder="Any"
-            value={filters.sizeMax || ""}
-            onChange={(e) =>
-              updateFilter("sizeMax", Number(e.target.value) || undefined)
-            }
-            className="border w-full border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 h-9 text-sm"
-          />
-        </div>
-        {/* Price Range */}
-        <div className="space-y-1">
-          <Label
-            htmlFor="priceMin"
-            className="text-sm font-medium text-gray-700"
-          >
-            Min Price (GMD)
-          </Label>
-          <Input
-            id="priceMin"
-            type="text"
-            placeholder="0"
-            value={
-              filters.priceMin !== undefined
-                ? Number(filters.priceMin).toLocaleString()
-                : ""
-            }
-            onChange={(e) => {
-              const raw = e.target.value.replace(/,/g, "");
-              const num = Number(raw);
-              updateFilter("priceMin", isNaN(num) ? undefined : num);
-            }}
-            className="border w-full border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 h-9 text-sm"
-          />
-        </div>
-        <div className="space-y-1">
-          <Label
-            htmlFor="priceMax"
-            className="text-sm font-medium text-gray-700"
-          >
-            Max Price (GMD)
-          </Label>
-          <Input
-            id="priceMax"
-            type="text"
-            placeholder="Any"
-            value={
-              filters.priceMax !== undefined
-                ? Number(filters.priceMax).toLocaleString()
-                : ""
-            }
-            onChange={(e) => {
-              const raw = e.target.value.replace(/,/g, "");
-              const num = Number(raw);
-              updateFilter("priceMax", isNaN(num) ? undefined : num);
-            }}
-            className="border w-full border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 h-9 text-sm"
-          />
-        </div>
-      </div>
-      {/* Action Buttons for smaller screens */}
       <div className="mt-6 flex gap-3 justify-end">
         <Button
-          variant="default"
           onClick={applyFilters}
           disabled={Object.values(filters).filter(Boolean).length === 0}
           className="rounded-full text-sm px-6 py-2 bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200 h-9"
         >
+          <Search className="mr-2 h-4 w-4" />
           Search
         </Button>
         <Button
@@ -509,23 +282,30 @@ const FilterSidebar = ({
           onClick={clearFilters}
           className="rounded-full text-sm px-6 py-2 border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors duration-200 h-9"
         >
-          Clear Filters
+          <X className="mr-2 h-4 w-4" />
+          Clear
         </Button>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default function ListingsPage() {
   const searchParams = useSearchParams();
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
-  const [filters, setFilters] = useState<PropertyFilters | null>(null); // Used for actual search
-  const [pendingFilters, setPendingFilters] = useState<PropertyFilters>({}); // Used for form inputs
+  const [filters, setFilters] = useState<PropertyFilters | null>(null);
+  const [pendingFilters, setPendingFilters] = useState<PropertyFilters>({});
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    if (filters === null) return; // Don't fetch on initial mount
+    setIsVisible(true);
+  }, []);
+
+  useEffect(() => {
+    if (filters === null) return;
     async function fetchFilteredProperties() {
       setLoading(true);
       try {
@@ -535,9 +315,7 @@ export default function ListingsPage() {
             params.set(key, value.toString());
         });
         const url = `${API_URL}/api/properties/search?${params.toString()}`;
-        console.log("Fetching:", url);
         const res = await axios.get(url);
-        console.log("Response:", res.data);
         setFilteredProperties(res.data);
       } catch (err) {
         setFilteredProperties([]);
@@ -570,7 +348,6 @@ export default function ListingsPage() {
     if (sizeMin) initialFilters.sizeMin = Number(sizeMin);
     if (sizeMax) initialFilters.sizeMax = Number(sizeMax);
 
-    // Only trigger search if there are query params
     const hasQuery =
       type ||
       status ||
@@ -582,17 +359,15 @@ export default function ListingsPage() {
       sizeMin ||
       sizeMax;
 
-    setPendingFilters(initialFilters); // always sync form
+    setPendingFilters(initialFilters);
 
-    // Set filters for search or default fetch
     if (hasQuery) {
-      setFilters(initialFilters); // triggers search with filters
+      setFilters(initialFilters);
     } else {
-      setFilters({}); // triggers default fetch (all properties)
+      setFilters({});
     }
   }, [searchParams]);
 
-  // Update pendingFilters on input change
   const updatePendingFilter = (key: keyof PropertyFilters, value: any) => {
     setPendingFilters((prev) => ({
       ...prev,
@@ -600,47 +375,32 @@ export default function ListingsPage() {
     }));
   };
 
-  // When Search button is clicked, update filters (triggers search)
   const applyFilters = () => {
     setFilters(pendingFilters);
-    setIsFilterOpen(false); // Close mobile filter sidebar after search
+    setIsFilterOpen(false);
   };
 
   const clearFilters = () => {
     setPendingFilters({});
-    setFilters({}); // Fetch all properties after clearing filters
+    setFilters({});
   };
 
   const activeFilterCount =
     Object.values(pendingFilters).filter(Boolean).length;
 
-  // Skeleton grid for loading state
-  if (loading) {
+  // Loading state
+  if (loading && filters === null) {
     return (
-      <div className="min-h-screen bg-gray-50 mt-11">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
         <Header />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-10">
-          <div className="mb-7">
-            <h1 className="text-4xl font-extrabold text-gray-900 mb-3">
-              Discover Your Dream Property ✨
-            </h1>
-          </div>
-          <div className="flex flex-col gap-8">
-            <div className="hidden lg:block">
-              <FilterSidebar
-                filters={pendingFilters}
-                updateFilter={updatePendingFilter}
-                clearFilters={clearFilters}
-                activeFilterCount={activeFilterCount}
-                applyFilters={applyFilters}
-              />
-            </div>
-            <div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <SkeletonPropertyCard key={i} />
-                ))}
-              </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded-xl w-64 mb-6"></div>
+            <div className="h-4 bg-gray-200 rounded-lg w-96 mb-8"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <SkeletonPropertyCard key={i} />
+              ))}
             </div>
           </div>
         </div>
@@ -648,71 +408,35 @@ export default function ListingsPage() {
     );
   }
 
-  // Pass pendingFilters and updatePendingFilter to FilterSidebar
   return (
-    <div className="min-h-screen bg-gray-50 mt-11">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
       <Header />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-10">
-        {/* Header Section */}
-        <div className="mb-7">
-          <h1 className="text-4xl font-extrabold text-gray-900 mb-3">
-            Discover Your Dream Property ✨
-          </h1>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-gray-600 text-lg mb-4 sm:mb-0">
-              Found{" "}
-              <span className="font-semibold text-blue-600">
-                {filteredProperties.length}
+
+      {/* Hero Section */}
+      <section className="relative pt-8 pb-6 overflow-hidden">
+        {/* Backgrounds */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-purple-600/5 z-0" />
+        <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-5 z-0" />
+
+        {/* Content */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Optional Title */}
+          <div
+            className={`transition-all duration-1000 ${
+              isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-6"
+            } mb-6 text-center`}
+          >
+            <h1 className="text-3xl sm:text-4xl font-semibold text-gray-900">
+              <span className="bg-gradient-to-r from-gray-900 via-blue-700 to-purple-700 bg-clip-text text-transparent">
+                Your Next Property Is Just a Click Away
               </span>
-              {activeFilterCount > 0
-                ? " properties matching your criteria."
-                : " properties available."}
-            </p>
-            {/* Mobile Filter Button */}
-            <div className="lg:hidden">
-              <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
-                <SheetTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="flex items-center space-x-2 px-5 py-2 rounded-full text-gray-700 border-gray-300 hover:bg-gray-50 transition-colors h-9"
-                  >
-                    <SlidersHorizontal className="h-5 w-5" />
-                    <span>Filters</span>
-                    {activeFilterCount > 0 && (
-                      <Badge className="ml-2 h-6 w-6 flex items-center justify-center p-0 text-xs bg-blue-500 text-white rounded-full">
-                        {activeFilterCount}
-                      </Badge>
-                    )}
-                  </Button>
-                </SheetTrigger>
-                <SheetContent
-                  side="left"
-                  className="w-80 sm:w-96 h-full overflow-y-auto"
-                >
-                  <SheetHeader>
-                    <SheetTitle>Refine Your Search</SheetTitle>
-                    <SheetDescription>
-                      Adjust the filters to find the perfect property.
-                    </SheetDescription>
-                  </SheetHeader>
-                  <div className="mt-6">
-                    <FilterSidebar
-                      filters={pendingFilters}
-                      updateFilter={updatePendingFilter}
-                      clearFilters={clearFilters}
-                      activeFilterCount={activeFilterCount}
-                      applyFilters={applyFilters}
-                    />
-                  </div>
-                </SheetContent>
-              </Sheet>
-            </div>
+            </h1>
           </div>
-        </div>
-        {/* Main Content Layout */}
-        <div className="flex flex-col gap-8">
-          {/* Filter Bar (for larger screens, now above listings) */}
-          <div className="hidden lg:block">
+
+          {/* Filters (Desktop) */}
+          <div className="hidden lg:block -mt-2">
             <FilterSidebar
               filters={pendingFilters}
               updateFilter={updatePendingFilter}
@@ -721,35 +445,155 @@ export default function ListingsPage() {
               applyFilters={applyFilters}
             />
           </div>
-          {/* Property Grid */}
-          <div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {loading
-                ? Array.from({ length: 8 }).map((_, i) => (
-                    <SkeletonPropertyCard key={i} />
-                  ))
-                : filteredProperties.length > 0
-                ? filteredProperties.map((property) => (
-                    <PropertyCard key={property._id} property={property} />
-                  ))
-                : null}
+
+          {/* Results & View Toggle */}
+          <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            {/* Results Count */}
+            <div className="px-6 py-3 bg-white/90 backdrop-blur-md rounded-2xl shadow border border-gray-200">
+              <span className="text-gray-600 font-medium">Found </span>
+              <span className="font-bold text-2xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                {filteredProperties.length}
+              </span>
+              <span className="text-gray-600 font-medium"> properties</span>
             </div>
-            {!loading && filteredProperties.length === 0 && (
-              <div className="bg-white rounded-xl shadow-sm p-10 text-center border border-gray-100 mt-8">
-                <Search className="h-16 w-16 text-gray-300 mx-auto mb-6" />
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                  No properties found
-                </h3>
-                <p className="text-gray-600 mb-8 text-lg">
-                  It looks like there are no properties matching your current
-                  filters.
-                </p>
+
+            {/* View Toggle & Filters (Mobile) */}
+            <div className="flex items-center space-x-3">
+              <div className="flex bg-white/90 backdrop-blur-md rounded-2xl p-1 shadow border border-gray-200">
                 <Button
-                  onClick={clearFilters}
-                  className="px-8 py-3 rounded-full text-blue-600 border border-blue-600 bg-white hover:bg-blue-50 transition-colors duration-200"
+                  variant={viewMode === "grid" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setViewMode("grid")}
+                  className={`px-4 py-2 rounded-xl transition-all ${
+                    viewMode === "grid"
+                      ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                      : "text-gray-600 hover:bg-gray-100"
+                  }`}
                 >
-                  Clear All Filters
+                  <Grid3X3 className="h-4 w-4" />
                 </Button>
+                <Button
+                  variant={viewMode === "list" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setViewMode("list")}
+                  className={`px-4 py-2 rounded-xl transition-all ${
+                    viewMode === "list"
+                      ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                      : "text-gray-600 hover:bg-gray-100"
+                  }`}
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
+
+              {/* Mobile Filters Button */}
+              <div className="lg:hidden">
+                <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+                  <SheetTrigger asChild>
+                    <Button className="px-5 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl shadow hover:scale-105 transition-all duration-300">
+                      <SlidersHorizontal className="mr-2 h-5 w-5" />
+                      Filters
+                      {activeFilterCount > 0 && (
+                        <Badge className="ml-3 px-2 py-1 text-xs bg-white/20 text-white rounded-full">
+                          {activeFilterCount}
+                        </Badge>
+                      )}
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent
+                    side="left"
+                    className="w-full sm:w-96 h-full overflow-y-auto bg-white/70 backdrop-blur-xl border-r-0"
+                  >
+                    <SheetHeader className="pb-6 border-b border-gray-200">
+                      <SheetTitle className="text-2xl font-bold text-gray-900 flex items-center">
+                        <Filter className="mr-3 h-6 w-6 text-blue-600" />
+                        Filter Properties
+                      </SheetTitle>
+                      <SheetDescription className="text-gray-600">
+                        Narrow your search to match your needs
+                      </SheetDescription>
+                    </SheetHeader>
+                    <div className="mt-6">
+                      <FilterSidebar
+                        filters={pendingFilters}
+                        updateFilter={updatePendingFilter}
+                        clearFilters={clearFilters}
+                        activeFilterCount={activeFilterCount}
+                        applyFilters={applyFilters}
+                        isMobile={true}
+                      />
+                    </div>
+                  </SheetContent>
+                </Sheet>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 pt-8">
+        <div className="w-full">
+          {/* Property Grid */}
+          <div className="w-full">
+            {loading ? (
+              <div
+                className={`grid ${
+                  viewMode === "grid"
+                    ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                    : "grid-cols-1 gap-4"
+                }`}
+              >
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <SkeletonPropertyCard key={i} />
+                ))}
+              </div>
+            ) : filteredProperties.length > 0 ? (
+              <div
+                className={`grid ${
+                  viewMode === "grid"
+                    ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                    : "grid-cols-1 gap-4"
+                } transition-all duration-500`}
+              >
+                {filteredProperties.map((property, index) => (
+                  <div
+                    key={property._id}
+                    className={`transition-all duration-500 hover:scale-105 ${
+                      isVisible
+                        ? "opacity-100 translate-y-0"
+                        : "opacity-0 translate-y-10"
+                    }`}
+                    style={{ transitionDelay: `${index * 50}ms` }}
+                  >
+                    <PropertyCard property={property} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              // No results state
+              <div className="bg-white rounded-3xl shadow-xl p-12 text-center border border-gray-100 backdrop-blur-sm">
+                <div className="w-24 h-24 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Search className="h-12 w-12 text-blue-600" />
+                </div>
+                <h3 className="text-3xl font-bold text-gray-900 mb-4">
+                  No Properties Found
+                </h3>
+                <p className="text-gray-600 mb-8 text-lg max-w-md mx-auto leading-relaxed">
+                  We couldn&apos;t find any properties matching your current
+                  search criteria. Try adjusting your filters or clearing them
+                  to see more options.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Button
+                    onClick={clearFilters}
+                    className="group px-8 py-4 text-base font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-2xl shadow-xl hover:shadow-blue-500/30 transform hover:scale-105 transition-all duration-300"
+                  >
+                    <X className="mr-3 h-5 w-5" />
+                    Clear All Filters
+                    <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </div>
               </div>
             )}
           </div>
