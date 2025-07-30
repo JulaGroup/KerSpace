@@ -5,6 +5,7 @@ import { Eye, EyeOff, Home, Mail, Lock, User, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { API_URL } from "@/config/constat";
 
 const AuthPage = () => {
   const [mode, setMode] = useState<"login" | "register">("login");

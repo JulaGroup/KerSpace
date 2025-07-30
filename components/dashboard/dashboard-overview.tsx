@@ -12,6 +12,7 @@ import { RecentSales } from "../dashboard/recent-sales";
 import { Building2, Users, CalendarClock, DollarSign } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Spinner } from "../ui/spinner";
+import { API_URL } from "@/config/constat";
 
 export function DashboardOverview() {
   const [loading, setLoading] = useState(true);

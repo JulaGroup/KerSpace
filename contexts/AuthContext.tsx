@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import React, { createContext, useContext, useState, ReactNode } from "react";
+import { API_URL } from "@/config/constat";
 
 export type UserRole = "public" | "user" | "vendor" | "admin";
 

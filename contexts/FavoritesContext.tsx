@@ -1,5 +1,6 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { API_URL } from "@/config/constat";
 
 interface FavoritesContextType {
   favorites: string[]; // Array of property IDs

@@ -1,4 +1,5 @@
-// components/dashboard/messagesData.ts
+import { API_URL } from "@/config/constat";
+
 export async function fetchMessages(token: string) {
   const res = await fetch(
     `${API_URL}/api/admin/requests`, // Use API_URL constant

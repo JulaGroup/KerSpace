@@ -23,6 +23,7 @@ import {
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { IllustrationCard } from "@/components/IllustrationCards";
+import { API_URL } from "@/config/constat";
 
 export default function HomePage() {
   const [featuredProperties, setFeaturedProperties] = useState<Property[]>([]);

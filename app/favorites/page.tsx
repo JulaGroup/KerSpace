@@ -5,6 +5,7 @@ import { PropertyCard } from "@/components/PropertyCard";
 import { Header } from "@/components/Header";
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { API_URL } from "@/config/constat";
 
 const Favorites = () => {
   const [properties, setProperties] = useState<Property[]>([]);

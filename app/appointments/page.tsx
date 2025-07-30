@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Home, Clock, Search } from "lucide-react";
 import Image from "next/image";
+import { API_URL } from "@/config/constat";
 
 interface Appointment {
   _id: string;

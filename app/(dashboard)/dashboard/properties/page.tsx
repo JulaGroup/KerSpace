@@ -1,4 +1,5 @@
 "use client";
+import { API_URL } from "@/config/constat";
 
 import { useState, useEffect } from "react";
 import { Plus, X, Pencil } from "lucide-react";

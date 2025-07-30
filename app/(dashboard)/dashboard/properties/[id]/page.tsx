@@ -1,4 +1,5 @@
 "use client";
+import { API_URL } from "@/config/constat";
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";

@@ -15,6 +15,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import axios from "axios";
+import { API_URL } from "@/config/constat";
 
 type Property = {
   _id?: string;

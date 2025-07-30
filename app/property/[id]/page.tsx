@@ -1,5 +1,5 @@
 "use client";
-
+import { API_URL } from "@/config/constat";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";

@@ -7,6 +7,7 @@ import { Calendar, User, MapPin, Phone, Eye } from "lucide-react";
 import axios from "axios";
 import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
+import { API_URL } from "@/config/constat";
 
 // Define the Appointment type based on expected properties
 interface Appointment {
