@@ -29,7 +29,18 @@ import Image from "next/image";
 export default function AboutPage() {
   const [isVisible, setIsVisible] = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
-
+  const [slideDirection, setSlideDirection] = useState<"left" | "right">(
+    "right"
+  );
+  const goToTestimonial = (idx: number) => {
+    setSlideDirection(
+      idx > activeTestimonial ||
+        (activeTestimonial === testimonials.length - 1 && idx === 0)
+        ? "right"
+        : "left"
+    );
+    setActiveTestimonial(idx);
+  };
   useEffect(() => {
     setIsVisible(true);
   }, []);
@@ -141,13 +152,20 @@ export default function AboutPage() {
       color: "from-green-500 to-green-600",
     },
   ];
-
+  // Auto-slide testimonials every 6 seconds
+  useEffect(() => {
+    if (typeof window === "undefined" || testimonials.length <= 1) return;
+    const interval = setInterval(() => {
+      setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, [testimonials.length]);
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
       <Header />
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-10">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-4">
         {/* Background */}
         <div className="absolute inset-0">
           <Image
@@ -458,7 +476,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
+      {/* Testimonials Section - Sliding Carousel */}
       <section className="py-20 bg-gradient-to-br from-white to-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -474,55 +492,128 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <div
-                key={testimonial.name}
-                className={`bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 relative ${
-                  isVisible
-                    ? "opacity-100 translate-y-0"
-                    : "opacity-0 translate-y-10"
-                }`}
-                style={{ transitionDelay: `${index * 200}ms` }}
+          {/* Carousel Controls */}
+          <div className="relative">
+            <div className="flex justify-center items-center mb-8">
+              <button
+                aria-label="Previous testimonial"
+                onClick={() => {
+                  setSlideDirection("left");
+                  setActiveTestimonial(
+                    (prev) =>
+                      (prev - 1 + testimonials.length) % testimonials.length
+                  );
+                }}
+                className="rounded-full p-2 bg-white shadow hover:bg-pink-100 transition-colors mr-4 disabled:opacity-50"
+                disabled={testimonials.length <= 1}
               >
-                <div className="absolute -top-4 left-8">
-                  <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                    <Quote className="h-4 w-4 text-white" />
-                  </div>
-                </div>
-
-                <div className="mb-6">
-                  <div className="flex items-center mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className="h-5 w-5 text-yellow-400 fill-current"
-                      />
-                    ))}
-                  </div>
-                  <p className="text-gray-600 leading-relaxed text-lg italic">
-                    &quot;{testimonial.content}&quot;
-                  </p>
-                </div>
-
-                <div className="flex items-center">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mr-4">
-                    <span className="text-white font-bold text-lg">
-                      {testimonial.name.charAt(0)}
-                    </span>
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-gray-900">
-                      {testimonial.name}
-                    </h4>
-                    <p className="text-gray-600 text-sm">{testimonial.role}</p>
-                    <p className="text-gray-500 text-xs">
-                      {testimonial.location}
-                    </p>
+                <svg
+                  width="24"
+                  height="24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-pink-600"
+                >
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </button>
+              <div className="flex-1 max-w-3xl">
+                {/* Slide */}
+                <div className="flex justify-center overflow-hidden min-h-[290px]">
+                  <div
+                    key={activeTestimonial}
+                    className={`bg-white rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 relative w-full max-w-xl
+      ${isVisible ? "opacity-100" : "opacity-0"}
+      ${
+        slideDirection === "right"
+          ? "animate-slide-in-right"
+          : "animate-slide-in-left"
+      }
+    `}
+                    style={{ minHeight: 230 }}
+                  >
+                    <div className="absolute -top-4 left-8">
+                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                        <Quote className="h-4 w-4 text-white" />
+                      </div>
+                    </div>
+                    <div className="mb-6">
+                      <div className="flex items-center mb-4">
+                        {[...Array(testimonials[activeTestimonial].rating)].map(
+                          (_, i) => (
+                            <Star
+                              key={i}
+                              className="h-5 w-5 text-yellow-400 fill-current"
+                            />
+                          )
+                        )}
+                      </div>
+                      <p className="text-gray-600 leading-relaxed text-lg italic">
+                        &quot;{testimonials[activeTestimonial].content}&quot;
+                      </p>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mr-4">
+                        <span className="text-white font-bold text-lg">
+                          {testimonials[activeTestimonial].name.charAt(0)}
+                        </span>
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-gray-900">
+                          {testimonials[activeTestimonial].name}
+                        </h4>
+                        <p className="text-gray-600 text-sm">
+                          {testimonials[activeTestimonial].role}
+                        </p>
+                        <p className="text-gray-500 text-xs">
+                          {testimonials[activeTestimonial].location}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            ))}
+              <button
+                aria-label="Next testimonial"
+                onClick={() => {
+                  setSlideDirection("right");
+                  setActiveTestimonial(
+                    (prev) => (prev + 1) % testimonials.length
+                  );
+                }}
+                className="rounded-full p-2 bg-white shadow hover:bg-pink-100 transition-colors ml-4 disabled:opacity-50"
+                disabled={testimonials.length <= 1}
+              >
+                <svg
+                  width="24"
+                  height="24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-pink-600"
+                >
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+            </div>
+            {/* Dots */}
+            <div className="flex justify-center gap-2 mt-2">
+              {testimonials.map((_, idx) => (
+                <button
+                  key={idx}
+                  className={`w-3 h-3 rounded-full border-2 border-pink-300 ${
+                    activeTestimonial === idx ? "bg-pink-500" : "bg-white"
+                  }`}
+                  onClick={() => goToTestimonial(idx)}
+                  aria-label={`Go to testimonial ${idx + 1}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -633,11 +724,9 @@ export default function AboutPage() {
               <ul className="space-y-3">
                 {[
                   { label: "Home", href: "/" },
-                  { label: "Properties", href: "/listings" },
-                  { label: "Services", href: "/services" },
-                  { label: "About Us", href: "/about" },
+                  { label: "About", href: "/about" },
+                  { label: "Listings", href: "/listings" },
                   { label: "Contact", href: "/contact" },
-                  { label: "Blog", href: "/blog" },
                 ].map((link) => (
                   <li key={link.label}>
                     <Link
@@ -663,7 +752,9 @@ export default function AboutPage() {
                     <span className="text-blue-400">📞</span>
                   </div>
                   <div>
-                    <p className="text-white font-medium">+220 123 4567</p>
+                    <p className="text-white font-medium">
+                      +220 7595999 or +220 390 2798
+                    </p>
                     <p className="text-gray-400 text-sm">24/7 Support</p>
                   </div>
                 </li>
@@ -672,7 +763,9 @@ export default function AboutPage() {
                     <span className="text-purple-400">✉️</span>
                   </div>
                   <div>
-                    <p className="text-white font-medium">info@kerspace.com</p>
+                    <p className="text-white font-medium">
+                      ker.spacegm@gmail.com
+                    </p>
                     <p className="text-gray-400 text-sm">Email us anytime</p>
                   </div>
                 </li>
@@ -681,10 +774,8 @@ export default function AboutPage() {
                     <span className="text-green-400">📍</span>
                   </div>
                   <div>
-                    <p className="text-white font-medium">
-                      456 Real Estate Blvd
-                    </p>
-                    <p className="text-gray-400 text-sm">Banjul, The Gambia</p>
+                    <p className="text-white font-medium">Turntable</p>
+                    <p className="text-gray-400 text-sm">Brusubi, The Gambia</p>
                   </div>
                 </li>
               </ul>

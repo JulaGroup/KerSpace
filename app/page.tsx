@@ -491,11 +491,9 @@ export default function HomePage() {
               <ul className="space-y-3">
                 {[
                   { label: "Home", href: "/" },
-                  { label: "Properties", href: "/listings" },
-                  { label: "Services", href: "/services" },
-                  { label: "About Us", href: "/about" },
+                  { label: "About", href: "/about" },
+                  { label: "Listings", href: "/listings" },
                   { label: "Contact", href: "/contact" },
-                  { label: "Blog", href: "/blog" },
                 ].map((link) => (
                   <li key={link.label}>
                     <Link
@@ -521,7 +519,9 @@ export default function HomePage() {
                     <span className="text-blue-400">📞</span>
                   </div>
                   <div>
-                    <p className="text-white font-medium">+220 123 4567</p>
+                    <p className="text-white font-medium">
+                      +220 7595999 or +220 390 2798
+                    </p>
                     <p className="text-gray-400 text-sm">24/7 Support</p>
                   </div>
                 </li>
@@ -530,7 +530,9 @@ export default function HomePage() {
                     <span className="text-purple-400">✉️</span>
                   </div>
                   <div>
-                    <p className="text-white font-medium">info@kerspace.com</p>
+                    <p className="text-white font-medium">
+                      ker.spacegm@gmail.com
+                    </p>
                     <p className="text-gray-400 text-sm">Email us anytime</p>
                   </div>
                 </li>
@@ -539,10 +541,8 @@ export default function HomePage() {
                     <span className="text-green-400">📍</span>
                   </div>
                   <div>
-                    <p className="text-white font-medium">
-                      456 Real Estate Blvd
-                    </p>
-                    <p className="text-gray-400 text-sm">Banjul, The Gambia</p>
+                    <p className="text-white font-medium">Turntable</p>
+                    <p className="text-gray-400 text-sm">Brusubi, The Gambia</p>
                   </div>
                 </li>
               </ul>

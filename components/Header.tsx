@@ -81,8 +81,8 @@ export function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-1">
             <NavItem href="/" label="Home" />
-            <NavItem href="/listings" label="Listings" />
             <NavItem href="/about" label="About" />
+            <NavItem href="/listings" label="Listings" />
             <NavItem href="/contact" label="Contact" />
             {isAdmin && <NavItem href="/dashboard" label="Dashboard" />}
           </nav>

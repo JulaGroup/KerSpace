@@ -182,7 +182,7 @@ export default function ListingsPage() {
           >
             <h1 className="text-3xl sm:text-4xl font-semibold text-gray-900">
               <span className="bg-gradient-to-r from-gray-900 via-blue-700 to-purple-700 bg-clip-text text-transparent">
-                Your Next Property Is Just a Click Away
+                Discover Property That Fits You
               </span>
             </h1>
           </div>
@@ -198,55 +198,61 @@ export default function ListingsPage() {
             />
           </div>
 
-          {/* Results & View Toggle */}
-          <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-            {/* Results Count */}
-            <div className="px-6 py-3 bg-white/90 backdrop-blur-md rounded-2xl shadow border border-gray-200">
-              <span className="text-gray-600 font-medium">Found </span>
-              <span className="font-bold text-2xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                {filteredProperties.length}
-              </span>
-              <span className="text-gray-600 font-medium"> properties</span>
-            </div>
-
-            {/* View Toggle & Filters (Mobile) */}
-            <div className="flex items-center space-x-3">
-              <div className="flex bg-white/90 backdrop-blur-md rounded-2xl p-1 shadow border border-gray-200">
+          {/* Results & View Toggle/Filters Row */}
+          {/* Mobile: results + filters in a row. Desktop: results + view toggle spaced below filters. */}
+          <div className="mt-6">
+            {/* Mobile layout: results + view toggle + filters in a row, equal width */}
+            <div className="flex flex-row items-center justify-between gap-3 lg:hidden">
+              {/* Results Count - compact, single line, hide 'Found' on mobile */}
+              <div className="flex items-center justify-center px-2 py-2 bg-white/90 backdrop-blur-md rounded-2xl shadow border border-gray-200 w-1/3 min-w-0">
+                <span className="text-xs text-gray-600 font-medium hidden sm:inline">
+                  Found{" "}
+                </span>
+                <span className="font-bold text-base bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  {filteredProperties.length}
+                </span>
+                <span className="text-xs text-gray-600 font-medium ml-1">
+                  properties
+                </span>
+              </div>
+              {/* View Toggle */}
+              <div className="flex flex-row items-center justify-center bg-white/90 backdrop-blur-md rounded-2xl shadow border border-gray-200 w-1/3 min-w-0 p-1">
                 <Button
                   variant={viewMode === "grid" ? "default" : "ghost"}
-                  size="sm"
+                  size="icon"
                   onClick={() => setViewMode("grid")}
-                  className={`px-4 py-2 rounded-xl transition-all ${
+                  className={`rounded-xl transition-all h-9 w-9 ${
                     viewMode === "grid"
                       ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
                       : "text-gray-600 hover:bg-gray-100"
                   }`}
+                  aria-label="Grid view"
                 >
-                  <Grid3X3 className="h-4 w-4" />
+                  <Grid3X3 className="h-5 w-5" />
                 </Button>
                 <Button
                   variant={viewMode === "list" ? "default" : "ghost"}
-                  size="sm"
+                  size="icon"
                   onClick={() => setViewMode("list")}
-                  className={`px-4 py-2 rounded-xl transition-all ${
+                  className={`rounded-xl transition-all h-9 w-9 ml-2 ${
                     viewMode === "list"
                       ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
                       : "text-gray-600 hover:bg-gray-100"
                   }`}
+                  aria-label="List view"
                 >
-                  <List className="h-4 w-4" />
+                  <List className="h-5 w-5" />
                 </Button>
               </div>
-
-              {/* Mobile Filters Button */}
-              <div className="lg:hidden">
+              {/* Filters Button */}
+              <div className="w-1/3 min-w-0 flex justify-end">
                 <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
                   <SheetTrigger asChild>
-                    <Button className="px-5 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl shadow hover:scale-105 transition-all duration-300">
+                    <Button className="w-full px-0 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl shadow hover:scale-105 transition-all duration-300 flex items-center justify-center">
                       <SlidersHorizontal className="mr-2 h-5 w-5" />
-                      Filters
+                      <span className="hidden xs:inline">Filters</span>
                       {activeFilterCount > 0 && (
-                        <Badge className="ml-3 px-2 py-1 text-xs bg-white/20 text-white rounded-full">
+                        <Badge className="ml-2 px-2 py-1 text-xs bg-white/20 text-white rounded-full">
                           {activeFilterCount}
                         </Badge>
                       )}
@@ -254,7 +260,7 @@ export default function ListingsPage() {
                   </SheetTrigger>
                   <SheetContent
                     side="left"
-                    className="w-full sm:w-96 h-full overflow-y-auto bg-white/70 backdrop-blur-xl border-r-0"
+                    className="w-full sm:w-96 h-full overflow-y-auto bg-white backdrop-blur-xl border-r-0"
                   >
                     <SheetHeader className="pb-6 border-b border-gray-200">
                       <SheetTitle className="text-2xl font-bold text-gray-900 flex items-center">
@@ -277,6 +283,50 @@ export default function ListingsPage() {
                     </div>
                   </SheetContent>
                 </Sheet>
+              </div>
+            </div>
+
+            {/* Desktop layout: results + view toggle spaced below filters */}
+            <div className="hidden lg:flex flex-row items-center justify-between gap-4 mt-0">
+              <div className="px-6 py-3 bg-white/90 backdrop-blur-md rounded-2xl shadow border border-gray-200">
+                <span className="text-gray-600 font-medium max-sm:text-base">
+                  Found{" "}
+                </span>
+                <span className="font-bold text-2xl max-sm:text-xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  {filteredProperties.length}
+                </span>
+                <span className="text-gray-600 max-sm:text-base font-medium">
+                  {" "}
+                  {filteredProperties.length < 2 ? "property" : "properties"}
+                </span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="flex bg-white/90 backdrop-blur-md rounded-2xl p-1 shadow border border-gray-200">
+                  <Button
+                    variant={viewMode === "grid" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setViewMode("grid")}
+                    className={`px-4 py-2 rounded-xl transition-all ${
+                      viewMode === "grid"
+                        ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                  >
+                    <Grid3X3 className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={viewMode === "list" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setViewMode("list")}
+                    className={`px-4 py-2 rounded-xl transition-all ${
+                      viewMode === "list"
+                        ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                  >
+                    <List className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
