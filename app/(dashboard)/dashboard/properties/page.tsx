@@ -82,7 +82,7 @@ export default function PropertiesPage() {
     if (property && property._id) {
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/properties/${property._id}` // Use property._id here
+          `${API_URL}/api/properties/${property._id}` // Use API_URL constant
         );
         const apiProp = res.data;
         // Map API response to form shape
@@ -206,12 +206,12 @@ export default function PropertiesPage() {
       // MODIFIED: Use editingProperty._id
       if (editingProperty?._id) {
         await axios.put(
-          `http://localhost:5000/api/properties/${editingProperty._id}`, // Use _id here
+          `${API_URL}/api/properties/${editingProperty._id}`, // Use API_URL constant
           payload,
           { headers: { Authorization: `Bearer ${token}` } }
         );
       } else {
-        await axios.post("http://localhost:5000/api/properties", payload, {
+        await axios.post(`${API_URL}/api/properties`, payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
       }

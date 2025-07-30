@@ -51,7 +51,7 @@ Follow these steps to set up and run KërSpaces locally:
     npm run dev
     ```
 4.  **Backend API:**
-    - Ensure your backend API is running and accessible at `http://localhost:5000`. You may need to update API endpoints within the KërSpaces codebase if your backend is hosted elsewhere.
+    - Ensure your backend API is running and accessible at `https://kerspace-server.onrender.com`. You may need to update API endpoints within the KërSpaces codebase if your backend is hosted elsewhere.
 
 ---
 

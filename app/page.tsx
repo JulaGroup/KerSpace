@@ -34,9 +34,7 @@ export default function HomePage() {
     async function fetchProperties() {
       setLoading(true);
       try {
-        const res = await axios.get(
-          "http://localhost:5000/api/properties/featured"
-        );
+        const res = await axios.get(`${API_URL}/api/properties/featured`);
         const data = res.data;
         setFeaturedProperties(data);
       } catch (err) {

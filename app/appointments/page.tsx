@@ -45,9 +45,12 @@ const Appointments = () => {
           setLoading(false);
           return;
         }
-        const res = await fetch("http://localhost:5000/api/appointments", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await fetch(
+          `${API_URL}/api/appointments`, // Use API_URL constant
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         if (res.ok) {
           const data = await res.json();
           setAppointments(data);

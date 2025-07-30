@@ -75,7 +75,7 @@ export default function SpecificProperty() {
       setLoading(true);
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/properties/${id}`
+          `${API_URL}/api/properties/${id}` // Use API_URL constant
         );
         setProperty(res.data);
       } catch (err) {
@@ -470,7 +470,9 @@ export default function SpecificProperty() {
                     />
                   ) : (
                     <Chip
-                      label={`Available Units: ${property.availableUnits ?? "-"}`}
+                      label={`Available Units: ${
+                        property.availableUnits ?? "-"
+                      }`}
                       color="success"
                       sx={{ fontWeight: 600, borderRadius: 2 }}
                     />
@@ -664,33 +666,138 @@ export default function SpecificProperty() {
                 mb={4}
               >
                 {/* Standard features */}
-                <Card sx={(theme) => ({ p: 2, textAlign: "center", background: alpha(theme.palette.primary.main, 0.05), border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`, borderRadius: 2 })}>
-                  <BedIcon sx={(theme) => ({ color: theme.palette.primary.main, fontSize: 28, mb: 1 })} />
-                  <Typography variant="h6" fontWeight={700}>{property.bedrooms}</Typography>
-                  <Typography variant="caption" color="text.secondary">Bedrooms</Typography>
+                <Card
+                  sx={(theme) => ({
+                    p: 2,
+                    textAlign: "center",
+                    background: alpha(theme.palette.primary.main, 0.05),
+                    border: `1px solid ${alpha(
+                      theme.palette.primary.main,
+                      0.1
+                    )}`,
+                    borderRadius: 2,
+                  })}
+                >
+                  <BedIcon
+                    sx={(theme) => ({
+                      color: theme.palette.primary.main,
+                      fontSize: 28,
+                      mb: 1,
+                    })}
+                  />
+                  <Typography variant="h6" fontWeight={700}>
+                    {property.bedrooms}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Bedrooms
+                  </Typography>
                 </Card>
-                <Card sx={(theme) => ({ p: 2, textAlign: "center", background: alpha(theme.palette.primary.main, 0.05), border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`, borderRadius: 2 })}>
-                  <BathtubIcon sx={(theme) => ({ color: theme.palette.primary.main, fontSize: 28, mb: 1 })} />
-                  <Typography variant="h6" fontWeight={700}>{property.bathrooms}</Typography>
-                  <Typography variant="caption" color="text.secondary">Bathrooms</Typography>
+                <Card
+                  sx={(theme) => ({
+                    p: 2,
+                    textAlign: "center",
+                    background: alpha(theme.palette.primary.main, 0.05),
+                    border: `1px solid ${alpha(
+                      theme.palette.primary.main,
+                      0.1
+                    )}`,
+                    borderRadius: 2,
+                  })}
+                >
+                  <BathtubIcon
+                    sx={(theme) => ({
+                      color: theme.palette.primary.main,
+                      fontSize: 28,
+                      mb: 1,
+                    })}
+                  />
+                  <Typography variant="h6" fontWeight={700}>
+                    {property.bathrooms}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Bathrooms
+                  </Typography>
                 </Card>
-                <Card sx={(theme) => ({ p: 2, textAlign: "center", background: alpha(theme.palette.primary.main, 0.05), border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`, borderRadius: 2 })}>
-                  <SquareFootIcon sx={(theme) => ({ color: theme.palette.primary.main, fontSize: 28, mb: 1 })} />
-                  <Typography variant="h6" fontWeight={700}>{property.size}</Typography>
-                  <Typography variant="caption" color="text.secondary">Size (m²)</Typography>
+                <Card
+                  sx={(theme) => ({
+                    p: 2,
+                    textAlign: "center",
+                    background: alpha(theme.palette.primary.main, 0.05),
+                    border: `1px solid ${alpha(
+                      theme.palette.primary.main,
+                      0.1
+                    )}`,
+                    borderRadius: 2,
+                  })}
+                >
+                  <SquareFootIcon
+                    sx={(theme) => ({
+                      color: theme.palette.primary.main,
+                      fontSize: 28,
+                      mb: 1,
+                    })}
+                  />
+                  <Typography variant="h6" fontWeight={700}>
+                    {property.size}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Size (m²)
+                  </Typography>
                 </Card>
                 {/* Apartment-specific features */}
                 {property.type === "apartment" && (
                   <>
-                    <Card sx={(theme) => ({ p: 2, textAlign: "center", background: alpha(theme.palette.primary.main, 0.05), border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`, borderRadius: 2 })}>
-                      <HomeIcon sx={(theme) => ({ color: theme.palette.primary.main, fontSize: 28, mb: 1 })} />
-                      <Typography variant="h6" fontWeight={700}>{property.totalUnits ?? "-"}</Typography>
-                      <Typography variant="caption" color="text.secondary">Total Units</Typography>
+                    <Card
+                      sx={(theme) => ({
+                        p: 2,
+                        textAlign: "center",
+                        background: alpha(theme.palette.primary.main, 0.05),
+                        border: `1px solid ${alpha(
+                          theme.palette.primary.main,
+                          0.1
+                        )}`,
+                        borderRadius: 2,
+                      })}
+                    >
+                      <HomeIcon
+                        sx={(theme) => ({
+                          color: theme.palette.primary.main,
+                          fontSize: 28,
+                          mb: 1,
+                        })}
+                      />
+                      <Typography variant="h6" fontWeight={700}>
+                        {property.totalUnits ?? "-"}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        Total Units
+                      </Typography>
                     </Card>
-                    <Card sx={(theme) => ({ p: 2, textAlign: "center", background: alpha(theme.palette.primary.main, 0.05), border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`, borderRadius: 2 })}>
-                      <HomeIcon sx={(theme) => ({ color: theme.palette.success.main, fontSize: 28, mb: 1 })} />
-                      <Typography variant="h6" fontWeight={700}>{property.availableUnits ?? "-"}</Typography>
-                      <Typography variant="caption" color="text.secondary">Available Units</Typography>
+                    <Card
+                      sx={(theme) => ({
+                        p: 2,
+                        textAlign: "center",
+                        background: alpha(theme.palette.primary.main, 0.05),
+                        border: `1px solid ${alpha(
+                          theme.palette.primary.main,
+                          0.1
+                        )}`,
+                        borderRadius: 2,
+                      })}
+                    >
+                      <HomeIcon
+                        sx={(theme) => ({
+                          color: theme.palette.success.main,
+                          fontSize: 28,
+                          mb: 1,
+                        })}
+                      />
+                      <Typography variant="h6" fontWeight={700}>
+                        {property.availableUnits ?? "-"}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        Available Units
+                      </Typography>
                     </Card>
                   </>
                 )}

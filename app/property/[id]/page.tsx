@@ -138,9 +138,7 @@ export default function PropertyDetailPage() {
     async function fetchProperty() {
       setLoading(true);
       try {
-        const res = await fetch(
-          `http://localhost:5000/api/properties/${params.id}`
-        );
+        const res = await fetch(`${API_URL}/api/properties/${params.id}`);
         const data = await res.json();
         if (data) {
           setProperty(data);
@@ -163,7 +161,7 @@ export default function PropertyDetailPage() {
       }
       try {
         const res = await fetch(
-          `http://localhost:5000/api/appointments/property/${params.id}`,
+          `${API_URL}/api/appointments/property/${params.id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -207,7 +205,7 @@ export default function PropertyDetailPage() {
     e.preventDefault();
     if (!userAppointment) return;
     setIsEditing(true);
-    fetch(`http://localhost:5000/api/appointments/${userAppointment._id}`, {
+    fetch(`${API_URL}/api/appointments/${userAppointment._id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -242,7 +240,7 @@ export default function PropertyDetailPage() {
     setIsCanceling(true);
     try {
       const res = await fetch(
-        `http://localhost:5000/api/appointments/${userAppointment._id}`,
+        `${API_URL}/api/appointments/${userAppointment._id}`,
         {
           method: "DELETE",
           headers: {
@@ -356,7 +354,7 @@ export default function PropertyDetailPage() {
     if (appointmentForm.message && appointmentForm.message.trim() !== "") {
       appointmentData.message = appointmentForm.message;
     }
-    fetch("http://localhost:5000/api/appointments", {
+    fetch(`${API_URL}/api/appointments`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -379,7 +377,7 @@ export default function PropertyDetailPage() {
           // Re-fetch user appointment to update UI
           try {
             const res = await fetch(
-              `http://localhost:5000/api/appointments/property/${params.id}`,
+              `${API_URL}/api/appointments/property/${params.id}`,
               {
                 headers: {
                   Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -420,7 +418,7 @@ export default function PropertyDetailPage() {
       propertyId: params.id,
       message: requestInfoForm.message,
     };
-    fetch("http://localhost:5000/api/requests", {
+    fetch(`${API_URL}/api/requests`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -460,16 +458,13 @@ export default function PropertyDetailPage() {
     if (isFavoriting) return;
     setIsFavoriting(true);
     try {
-      const res = await fetch(
-        `http://localhost:5000/api/favorites/${params.id}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const res = await fetch(`${API_URL}/api/favorites/${params.id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       if (res.ok) {
         toast.success("Property added to favorites!");
         refreshFavorites();
@@ -493,15 +488,12 @@ export default function PropertyDetailPage() {
     if (isFavoriting) return;
     setIsFavoriting(true);
     try {
-      const res = await fetch(
-        `http://localhost:5000/api/favorites/${params.id}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const res = await fetch(`${API_URL}/api/favorites/${params.id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       if (res.ok) {
         toast.success("Property removed from favorites!");
         refreshFavorites();

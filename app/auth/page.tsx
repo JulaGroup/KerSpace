@@ -37,11 +37,14 @@ const AuthPage = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await fetch(
+        `${API_URL}/api/auth/login`, // Use API_URL constant
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
@@ -74,12 +77,14 @@ const AuthPage = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/register", {
-        email,
-        password,
-        name,
-        // role: "user",
-      });
+      const res = await axios.post(
+        `${API_URL}/api/auth/register`, // Use API_URL constant
+        {
+          email,
+          password,
+          name,
+        }
+      );
       if (res.data.success) {
         toast.success("Account created successfully!");
         setMode("login");
@@ -95,6 +100,8 @@ const AuthPage = () => {
         toast.error(error.response.data.message);
       }
       toast.error("An error occurred. Please try again.");
+      setPassword("");
+      setRole("user");
     } finally {
       setIsLoading(false);
     }

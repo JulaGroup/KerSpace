@@ -33,10 +33,10 @@ export function AppointmentList() {
       try {
         const token = localStorage.getItem("token");
         const [appsRes, propsRes] = await Promise.all([
-          axios.get("http://localhost:5000/api/admin/appointments", {
+          axios.get(`${API_URL}/api/admin/appointments`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get("http://localhost:5000/api/properties"),
+          axios.get(`${API_URL}/api/properties`),
         ]);
         setAppointments(Array.isArray(appsRes.data) ? appsRes.data : []);
         setProperties(Array.isArray(propsRes.data) ? propsRes.data : []);

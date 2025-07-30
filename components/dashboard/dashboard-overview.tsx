@@ -24,10 +24,10 @@ export function DashboardOverview() {
       setLoading(true);
       try {
         const token = localStorage.getItem("token");
-        const appsRes = await fetch("http://localhost:5000/api/appointments", {
+        const appsRes = await fetch(`${API_URL}/api/appointments`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const propsRes = await fetch("http://localhost:5000/api/properties");
+        const propsRes = await fetch(`${API_URL}/api/properties`);
         const apps = await appsRes.json();
         const props = await propsRes.json();
         if (mounted) {

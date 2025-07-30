@@ -535,7 +535,7 @@ export default function ListingsPage() {
           if (value !== undefined && value !== null && value !== "")
             params.set(key, value.toString());
         });
-        const url = `http://localhost:5000/api/properties/search?${params.toString()}`;
+        const url = `${API_URL}/api/properties/search?${params.toString()}`;
         console.log("Fetching:", url);
         const res = await axios.get(url);
         console.log("Response:", res.data);

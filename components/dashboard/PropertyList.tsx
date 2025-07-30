@@ -72,7 +72,9 @@ export default function PropertyList({ refresh, onEdit }: PropertyListProps) {
     async function fetchProperties() {
       setLoading(true);
       try {
-        const res = await axios.get("http://localhost:5000/api/properties");
+        const res = await axios.get(
+          `${API_URL}/api/properties` // Use API_URL constant
+        );
         setProperties(res.data);
       } catch (err) {
         setProperties([]);
@@ -97,7 +99,7 @@ export default function PropertyList({ refresh, onEdit }: PropertyListProps) {
       if (!token) {
         throw new Error("No authentication token found. Please log in again.");
       }
-      await axios.delete(`http://localhost:5000/api/properties/${id}`, {
+      await axios.delete(`${API_URL}/api/properties/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

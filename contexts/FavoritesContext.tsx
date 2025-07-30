@@ -31,7 +31,7 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
       return;
     }
     try {
-      const res = await fetch("http://localhost:5000/api/favorites", {
+      const res = await fetch(`${API_URL}/api/favorites`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

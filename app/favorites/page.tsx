@@ -22,7 +22,7 @@ const Favorites = () => {
           return;
         }
         const res = await fetch(
-          "http://localhost:5000/api/favorites/properties",
+          `${API_URL}/api/favorites/properties`, // Use API_URL constant
           {
             headers: { Authorization: `Bearer ${token}` },
           }

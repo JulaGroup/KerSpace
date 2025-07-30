@@ -34,10 +34,13 @@ export function LoginModal({
     e.preventDefault();
     setIsLoading(true);
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
-        email,
-        password,
-      });
+      const res = await axios.post(
+        `${API_URL}/api/auth/login`, // Use API_URL constant
+        {
+          email,
+          password,
+        }
+      );
       if (res.data && res.data.token) {
         localStorage.setItem("token", res.data.token);
         toast.success("Successfully signed in!");
