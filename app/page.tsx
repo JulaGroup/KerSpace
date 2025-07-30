@@ -7,7 +7,6 @@ import { SearchBar } from "@/components/SearchBar";
 import { PropertyCard } from "@/components/PropertyCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { mockProperties } from "@/lib/mockData";
 import { Property } from "@/types/property";
 import {
   Building,
