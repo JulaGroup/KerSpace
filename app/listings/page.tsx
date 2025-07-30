@@ -26,7 +26,6 @@ import { Badge } from "@/components/ui/badge";
 import { Property, PropertyFilters } from "@/types/property";
 import { Filter, Search, MapPin, SlidersHorizontal } from "lucide-react";
 import axios from "axios";
-import LoadingPage from "@/components/loading";
 import { SkeletonPropertyCard } from "@/components/dashboard/SkeletonPropertyCard";
 
 // Moved FilterSidebar outside to keep the main component cleaner

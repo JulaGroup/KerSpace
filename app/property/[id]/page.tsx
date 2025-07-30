@@ -61,7 +61,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { useFavorites } from "@/contexts/FavoritesContext";
-import LoadingPage from "@/components/loading";
+import LoadingPage from "@/app/loading";
 
 export default function PropertyDetailPage() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
