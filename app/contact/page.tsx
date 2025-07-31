@@ -1,14 +1,28 @@
 "use client";
 
-import { useState } from "react";
-import { Header } from "@/components/Header"; // Assuming your Header component path
+import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Phone, Mail, Clock, MessageSquare } from "lucide-react"; // Make sure lucide-react is installed
-import { toast } from "sonner"; // Make sure sonner is installed for toasts
+import { Badge } from "@/components/ui/badge";
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Clock,
+  MessageSquare,
+  ArrowRight,
+  Send,
+  CheckCircle,
+  Heart,
+  Shield,
+  Zap,
+  Globe,
+} from "lucide-react";
+import { toast } from "sonner";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -18,6 +32,12 @@ export default function ContactPage() {
     subject: "",
     message: "",
   });
+  const [isVisible, setIsVisible] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -26,14 +46,15 @@ export default function ContactPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real application, you would send this formData to your backend API
+    setIsSubmitting(true);
 
-    // Simulate API call success
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
     toast.success("Thank you for your message! We'll get back to you soon.");
 
-    // Reset the form
     setFormData({
       name: "",
       email: "",
@@ -41,103 +62,227 @@ export default function ContactPage() {
       subject: "",
       message: "",
     });
+    setIsSubmitting(false);
   };
 
   const contactInfo = [
     {
       icon: Phone,
       title: "Phone",
-      details: "+220 7595999",
-      description: "Call us for immediate assistance",
+      details: ["+220 7595999", "+220 390 2798"],
+      description: "24/7 Support Available",
+      color: "from-blue-500 to-blue-600",
+      hoverColor: "hover:shadow-blue-500/25",
     },
     {
       icon: Mail,
       title: "Email",
-      details: "hello@KërSpace.com",
-      description: "Send us your questions anytime",
+      details: ["ker.spacegm@gmail.com"],
+      description: "Quick Response Guaranteed",
+      color: "from-purple-500 to-purple-600",
+      hoverColor: "hover:shadow-purple-500/25",
     },
     {
       icon: MapPin,
       title: "Office",
-      details: "Brusubi, WCR, The Gambia",
-      description: "Visit our headquarters",
+      details: ["Turntable, Brusubi", "The Gambia"],
+      description: "Visit Our Headquarters",
+      color: "from-pink-500 to-pink-600",
+      hoverColor: "hover:shadow-pink-500/25",
     },
     {
       icon: Clock,
       title: "Hours",
-      details: "Mon-Fri: 9AM-6PM, Sat: 10AM-4PM",
-      description: "We're here when you need us",
+      details: ["Mon-Fri: 9AM-6PM", "Sat: 10AM-4PM"],
+      description: "We're Here When You Need Us",
+      color: "from-green-500 to-green-600",
+      hoverColor: "hover:shadow-green-500/25",
+    },
+  ];
+
+  const quickActions = [
+    {
+      icon: Phone,
+      title: "Call Us Now",
+      description: "Immediate assistance available",
+      action: "tel:+2207595999",
+      color: "from-blue-600 to-blue-700",
+      hoverColor: "hover:from-blue-700 hover:to-blue-800",
+    },
+    {
+      icon: Mail,
+      title: "Send Email",
+      description: "Detailed inquiries welcome",
+      action: "mailto:ker.spacegm@gmail.com",
+      color: "from-purple-600 to-purple-700",
+      hoverColor: "hover:from-purple-700 hover:to-purple-800",
+    },
+    {
+      icon: MessageSquare,
+      title: "WhatsApp Chat",
+      description: "Instant messaging support",
+      action: "https://wa.me/2207595999",
+      color: "from-green-600 to-green-700",
+      hoverColor: "hover:from-green-700 hover:to-green-800",
+    },
+  ];
+
+  const faqs = [
+    {
+      question: "What are your response times?",
+      answer:
+        "We typically respond within 2-4 hours during working hours, ensuring you get timely and helpful answers to all your inquiries.",
+    },
+    {
+      question: "Do you work weekends?",
+      answer:
+        "Yes! Our team is available on Saturdays (10 AM - 4 PM) and by appointment on Sundays for your convenience.",
+    },
+    {
+      question: "Can I schedule a property viewing?",
+      answer:
+        "Absolutely! Contact us using any method below, and we'll arrange a viewing time that perfectly suits your schedule.",
+    },
+    {
+      question: "Do you offer virtual tours?",
+      answer:
+        "Yes, we provide comprehensive virtual property tours using advanced 360° technology for your convenience.",
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800">
-      <Header />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
+      {/* Enhanced Hero Section - No Image */}
+      <section className="relative py-24 bg-gradient-to-br from-slate-800 via-slate-700 to-blue-800 overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-400/5 rounded-full blur-3xl animate-pulse delay-1000" />
+        </div>
 
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-blue-700 via-blue-800 to-blue-900 py-24 text-white text-center overflow-hidden">
-        {/* Optional: Subtle background pattern or image overlay - you'd define this class in your global CSS */}
-        {/* <div className="absolute inset-0 bg-pattern-light opacity-10 pointer-events-none"></div> */}
-        <div className="relative max-w-4xl mx-auto px-6 z-10">
-          <h1 className="text-6xl font-extrabold mb-6 leading-tight animate-fade-in-up">
-            Let’s Talk Real Estate
+        <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-5" />
+
+        <div
+          className={`relative z-20 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center transition-all duration-1000 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+          }`}
+        >
+          <Badge className="mb-6 bg-white/15 text-white border-white/20 px-6 py-3 text-lg font-semibold backdrop-blur-md">
+            Contact KërSpace
+          </Badge>
+
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-white">
+            Let&apos;s Make Your Property{" "}
+            <span className="bg-gradient-to-r from-blue-300 via-blue-200 to-white bg-clip-text text-transparent">
+              Dreams Reality
+            </span>
           </h1>
-          <p className="text-xl text-blue-100 opacity-90 leading-relaxed animate-fade-in-up delay-200">
-            Whether you're buying, selling, or just exploring — KërSpace is here
-            to help you achieve your property goals.
+
+          <p className="text-xl sm:text-2xl text-slate-200 max-w-4xl mx-auto leading-relaxed">
+            Whether you&apos;re buying, selling, renting, or investing — our
+            expert team is here to guide you every step of the way with{" "}
+            <span className="text-blue-300 font-medium">
+              personalized service
+            </span>{" "}
+            and{" "}
+            <span className="text-blue-200 font-medium">
+              cutting-edge solutions
+            </span>
+            .
           </p>
         </div>
       </section>
 
-      {/* Main Content Section */}
-      <section className="py-20 md:py-24 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
-          {/* Contact Info Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {contactInfo.map((info, index) => (
-              <Card
-                key={index}
-                className="text-center p-6 shadow-lg rounded-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 bg-white border-none"
-              >
-                <CardContent className="flex flex-col items-center justify-center space-y-3">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-50 rounded-full mb-4 shadow-inner">
-                    <info.icon className="h-8 w-8 text-blue-600" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-1">
-                    {info.title}
-                  </h3>
-                  <p className="font-semibold text-lg text-blue-700">
-                    {info.details}
-                  </p>
-                  <p className="text-sm text-gray-500 max-w-xs">
-                    {info.description}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
+      {/* Enhanced Contact Info Cards */}
+      <section className="py-20 bg-gradient-to-r from-slate-50 to-blue-50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-5" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="text-center mb-16">
+            <Badge className="mb-4 bg-blue-100 text-blue-700 px-6 py-2 text-sm font-semibold">
+              Get In Touch
+            </Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+              Multiple Ways to Reach Us
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Choose the method that works best for you — we&apos;re always
+              ready to help
+            </p>
           </div>
 
-          {/* Contact Form + Sidebar */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {contactInfo.map((info, index) => {
+              const Icon = info.icon;
+              return (
+                <div
+                  key={info.title}
+                  className={`group cursor-default bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl ${
+                    info.hoverColor
+                  } transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 hover:border-transparent ${
+                    isVisible
+                      ? "opacity-100 translate-y-0"
+                      : "opacity-0 translate-y-10"
+                  }`}
+                  style={{ transitionDelay: `${index * 100}ms` }}
+                >
+                  <div
+                    className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r ${info.color} mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}
+                  >
+                    <Icon className="h-8 w-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-blue-600 transition-colors">
+                    {info.title}
+                  </h3>
+                  <div className="space-y-1 mb-3">
+                    {info.details.map((detail, i) => (
+                      <p key={i} className="text-gray-900 font-semibold">
+                        {detail}
+                      </p>
+                    ))}
+                  </div>
+                  <p className="text-gray-600 text-sm">{info.description}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Enhanced Main Content Section */}
+      <section className="py-20 bg-gradient-to-br from-white to-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16 items-start">
-            {/* Form */}
-            <Card className="shadow-2xl lg:col-span-2 rounded-xl bg-white border-none p-6">
-              <CardHeader className="mb-6 p-0">
-                <CardTitle className="flex items-center text-3xl font-bold text-gray-900">
-                  <MessageSquare className="h-8 w-8 mr-3 text-blue-600" />
-                  Send Us a Message
-                </CardTitle>
-                <p className="text-gray-600 mt-2">
-                  We'd love to hear from you! Fill out the form below and we'll
-                  get back to you promptly.
-                </p>
-              </CardHeader>
-              <CardContent className="p-0">
-                <form onSubmit={handleSubmit} className="space-y-7">
+            {/* Enhanced Form */}
+            <div className="lg:col-span-2">
+              <div
+                className={`bg-white rounded-3xl p-8 shadow-2xl border border-gray-100 transition-all duration-1000 ${
+                  isVisible
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 translate-y-10"
+                }`}
+              >
+                <div className="mb-8">
+                  <div className="flex items-center mb-4">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 mr-4 shadow-lg">
+                      <MessageSquare className="h-6 w-6 text-white" />
+                    </div>
+                    <h3 className="text-3xl font-bold text-gray-900">
+                      Send Us a Message
+                    </h3>
+                  </div>
+                  <p className="text-gray-600 text-lg leading-relaxed">
+                    Ready to start your property journey? Fill out the form
+                    below and our expert team will get back to you with
+                    personalized solutions.
+                  </p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
+                    <div className="space-y-2">
                       <Label
                         htmlFor="name"
-                        className="text-gray-700 font-medium mb-1 block"
+                        className="text-gray-700 font-semibold"
                       >
                         Full Name <span className="text-red-500">*</span>
                       </Label>
@@ -147,14 +292,14 @@ export default function ContactPage() {
                         required
                         value={formData.name}
                         onChange={handleInputChange}
-                        placeholder="John Doe"
-                        className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                        placeholder="Enter your full name"
+                        className="h-12 px-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300 transition-all duration-300"
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label
                         htmlFor="email"
-                        className="text-gray-700 font-medium mb-1 block"
+                        className="text-gray-700 font-semibold"
                       >
                         Email Address <span className="text-red-500">*</span>
                       </Label>
@@ -165,14 +310,17 @@ export default function ContactPage() {
                         required
                         value={formData.email}
                         onChange={handleInputChange}
-                        placeholder="john@example.com"
-                        className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                        placeholder="your.email@example.com"
+                        className="h-12 px-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300 transition-all duration-300"
                       />
                     </div>
-                    <div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
                       <Label
                         htmlFor="phone"
-                        className="text-gray-700 font-medium mb-1 block"
+                        className="text-gray-700 font-semibold"
                       >
                         Phone Number
                       </Label>
@@ -182,14 +330,14 @@ export default function ContactPage() {
                         type="tel"
                         value={formData.phone}
                         onChange={handleInputChange}
-                        placeholder="+220 7595999"
-                        className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                        placeholder="+220 XXX XXXX"
+                        className="h-12 px-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300 transition-all duration-300"
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label
                         htmlFor="subject"
-                        className="text-gray-700 font-medium mb-1 block"
+                        className="text-gray-700 font-semibold"
                       >
                         Subject <span className="text-red-500">*</span>
                       </Label>
@@ -200,17 +348,17 @@ export default function ContactPage() {
                         value={formData.subject}
                         onChange={handleInputChange}
                         placeholder="What can we help you with?"
-                        className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                        className="h-12 px-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300 transition-all duration-300"
                       />
                     </div>
                   </div>
 
-                  <div>
+                  <div className="space-y-2">
                     <Label
                       htmlFor="message"
-                      className="text-gray-700 font-medium mb-1 block"
+                      className="text-gray-700 font-semibold"
                     >
-                      Message <span className="text-red-500">*</span>
+                      Your Message <span className="text-red-500">*</span>
                     </Label>
                     <Textarea
                       id="message"
@@ -218,147 +366,299 @@ export default function ContactPage() {
                       required
                       value={formData.message}
                       onChange={handleInputChange}
-                      placeholder="Tell us how we can assist you..."
+                      placeholder="Tell us about your property needs, budget, preferred location, or any specific requirements..."
                       rows={6}
-                      className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all min-h-[120px]"
+                      className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300 transition-all duration-300 min-h-[140px] resize-none"
                     />
                   </div>
 
                   <Button
                     type="submit"
-                    className="w-full py-3 px-6 bg-blue-700 hover:bg-blue-800 text-white text-lg font-semibold rounded-lg shadow-xl transform hover:scale-[1.01] transition-all duration-300"
+                    disabled={isSubmitting}
+                    className="group w-full h-14 px-8 text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl shadow-xl hover:shadow-blue-500/25 transform hover:scale-[1.02] transition-all duration-300 border-0"
                   >
-                    Send Message
+                    {isSubmitting ? (
+                      <>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+                        Sending Message...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="mr-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
+                        Send Message
+                        <ArrowRight className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
+                      </>
+                    )}
                   </Button>
                 </form>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            {/* Sidebar Cards */}
+            {/* Enhanced Sidebar */}
             <div className="space-y-8">
-              {/* Location Map Placeholder / Integration */}
-              <Card className="shadow-lg rounded-xl bg-white border-none">
-                <CardHeader className="p-6 pb-4">
-                  <CardTitle className="flex items-center text-xl font-bold text-gray-900">
-                    <MapPin className="h-6 w-6 mr-3 text-blue-600" />
-                    Our Location
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-6 pt-0">
-                  <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center shadow-inner overflow-hidden">
-                    {/* Placeholder for actual map integration.
-                        Replace this div content with your chosen map component (e.g., Google Maps iframe or library). */}
-                    <img
-                      src="https://via.placeholder.com/600x400?text=Interactive+Map+Coming+Soon"
-                      alt="Map Placeholder"
-                      className="w-full h-full object-cover"
-                    />
+              {/* Quick Actions */}
+              <div
+                className={`transition-all duration-1000 delay-200 ${
+                  isVisible
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 translate-y-10"
+                }`}
+              >
+                <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
+                  <h4 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <Zap className="h-6 w-6 mr-3 text-yellow-500" />
+                    Quick Actions
+                  </h4>
+                  <div className="space-y-4">
+                    {quickActions.map((action, index) => {
+                      const Icon = action.icon;
+                      return (
+                        <Button
+                          key={action.title}
+                          className={`w-full justify-start h-14 text-left bg-gradient-to-r ${action.color} ${action.hoverColor} text-white shadow-lg transform hover:scale-[1.02] transition-all duration-300 rounded-xl border-0`}
+                          asChild
+                        >
+                          <a
+                            href={action.action}
+                            target={
+                              action.action.startsWith("http")
+                                ? "_blank"
+                                : undefined
+                            }
+                            rel={
+                              action.action.startsWith("http")
+                                ? "noopener noreferrer"
+                                : undefined
+                            }
+                          >
+                            <div className="flex items-center">
+                              <div className="flex-shrink-0 mr-4">
+                                <Icon className="h-6 w-6" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="font-semibold">
+                                  {action.title}
+                                </div>
+                                <div className="text-sm opacity-90 truncate">
+                                  {action.description}
+                                </div>
+                              </div>
+                            </div>
+                          </a>
+                        </Button>
+                      );
+                    })}
                   </div>
-                  <div className="mt-5 text-base text-gray-700 leading-relaxed">
-                    <strong>KërSpace Headquarters</strong>
-                    <br />
-                    Brusubi Phase 1, Brusubi
-                    <br />
-                    WCR, The Gambia
-                    <br />
-                    <a
-                      href="https://www.google.com/maps/search/?api=1&query=Brusubi,+WCR,+The+Gambia" // Direct link to Google Maps search for directions
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline mt-2 inline-flex items-center text-sm"
-                    >
-                      <MapPin className="h-4 w-4 mr-1" /> Get Directions
-                    </a>
-                  </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
-              {/* Quick Contact Buttons */}
-              <Card className="shadow-lg rounded-xl bg-white border-none">
-                <CardHeader className="p-6 pb-4">
-                  <CardTitle className="text-xl font-bold text-gray-900">
-                    Quick Contact
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4 p-6 pt-0">
-                  <Button
-                    className="w-full justify-start py-3 text-base bg-blue-600 hover:bg-blue-700 text-white shadow-md"
-                    asChild
-                  >
-                    <a href="tel:+2207595999">
-                      <Phone className="mr-3 h-5 w-5" />
-                      Call Us Now
-                    </a>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start py-3 text-base border-blue-400 text-blue-700 hover:bg-blue-50 hover:border-blue-500"
-                    asChild
-                  >
-                    <a href="mailto:hello@KërSpace.com">
-                      <Mail className="mr-3 h-5 w-5" />
-                      Send Email
-                    </a>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start py-3 text-base border-green-400 text-green-700 hover:bg-green-50 hover:border-green-500"
-                    asChild
-                  >
-                    <a
-                      href="https://wa.me/2207595999"
-                      target="_blank"
-                      rel="noopener noreferrer"
+              {/* Enhanced Map Card */}
+              <div
+                className={`transition-all duration-1000 delay-300 ${
+                  isVisible
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 translate-y-10"
+                }`}
+              >
+                <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
+                  <h4 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <MapPin className="h-6 w-6 mr-3 text-pink-500" />
+                    Find Us Here
+                  </h4>
+                  <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center shadow-inner overflow-hidden mb-6">
+                    <div className="text-center p-4">
+                      <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-2" />
+                      <p className="text-gray-600 font-medium">
+                        Interactive Map
+                      </p>
+                      <p className="text-gray-500 text-sm">Coming Soon</p>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-start">
+                      <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                        <MapPin className="h-5 w-5 text-pink-600" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-gray-900">
+                          KërSpace Headquarters
+                        </p>
+                        <p className="text-gray-600">Turntable, Brusubi</p>
+                        <p className="text-gray-600">WCR, The Gambia</p>
+                      </div>
+                    </div>
+                    <Button
+                      variant="outline"
+                      className="w-full mt-4 h-12 border-2 border-pink-200 text-pink-700 hover:bg-pink-50 hover:border-pink-300 rounded-xl transition-all duration-300"
+                      asChild
                     >
-                      <MessageSquare className="mr-3 h-5 w-5" />
-                      WhatsApp Chat
-                    </a>
-                  </Button>
-                </CardContent>
-              </Card>
+                      <a
+                        href="https://www.google.com/maps/search/?api=1&query=Turntable,+Brusubi,+WCR,+The+Gambia"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <MapPin className="h-5 w-5 mr-2" />
+                        Get Directions
+                      </a>
+                    </Button>
+                  </div>
+                </div>
+              </div>
 
-              {/* FAQ Section */}
-              <Card className="shadow-lg rounded-xl bg-white border-none">
-                <CardHeader className="p-6 pb-4">
-                  <CardTitle className="text-xl font-bold text-gray-900">
-                    Frequently Asked Questions
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-5 p-6 pt-0 text-sm text-gray-700">
-                  <div>
-                    <strong className="text-gray-800 text-base">
-                      What are your response times?
-                    </strong>
-                    <p className="mt-1 leading-relaxed">
-                      We typically respond within **2-4 hours** during working
-                      hours, ensuring you get timely answers.
-                    </p>
+              {/* Enhanced FAQ Section */}
+              <div
+                className={`transition-all duration-1000 delay-400 ${
+                  isVisible
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 translate-y-10"
+                }`}
+              >
+                <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
+                  <h4 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <MessageSquare className="h-6 w-6 mr-3 text-blue-500" />
+                    Quick Answers
+                  </h4>
+                  <div className="space-y-6">
+                    {faqs.map((faq, index) => (
+                      <div
+                        key={index}
+                        className="border-b border-gray-100 last:border-b-0 pb-4 last:pb-0"
+                      >
+                        <h5 className="font-semibold text-gray-900 mb-2 flex items-start">
+                          <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                          {faq.question}
+                        </h5>
+                        <p className="text-gray-600 text-sm leading-relaxed ml-7">
+                          {faq.answer}
+                        </p>
+                      </div>
+                    ))}
                   </div>
-                  <div>
-                    <strong className="text-gray-800 text-base">
-                      Do you work weekends?
-                    </strong>
-                    <p className="mt-1 leading-relaxed">
-                      Yes, our team is available on **Saturdays (10 AM - 4 PM)**{" "}
-                      and by appointment on Sundays for your convenience.
-                    </p>
-                  </div>
-                  <div>
-                    <strong className="text-gray-800 text-base">
-                      Can I schedule a property viewing?
-                    </strong>
-                    <p className="mt-1 leading-relaxed">
-                      Absolutely! Just reach out to us using the form or quick
-                      contact options, and we’ll arrange a time that suits your
-                      schedule perfectly.
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Enhanced Footer */}
+      <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-gray-300 py-16 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-5" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+            {/* KërSpace Brand Section */}
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-2xl font-bold text-white mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                  KërSpace
+                </h3>
+                <p className="text-gray-400 leading-relaxed">
+                  Your trusted partner in finding and selling properties in The
+                  Gambia and beyond. Connecting dreams with reality through
+                  innovative technology.
+                </p>
+              </div>
+              <div className="flex space-x-4">
+                <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors cursor-pointer">
+                  <span className="text-white font-bold">f</span>
+                </div>
+                <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center hover:bg-purple-700 transition-colors cursor-pointer">
+                  <span className="text-white font-bold">in</span>
+                </div>
+                <div className="w-10 h-10 bg-pink-600 rounded-full flex items-center justify-center hover:bg-pink-700 transition-colors cursor-pointer">
+                  <span className="text-white font-bold">ig</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h4 className="text-lg font-semibold text-white mb-6">
+                Quick Links
+              </h4>
+              <ul className="space-y-3">
+                {[
+                  { label: "Home", href: "/" },
+                  { label: "About", href: "/about" },
+                  { label: "Listings", href: "/listings" },
+                  { label: "Contact", href: "/contact" },
+                ].map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      href={link.href}
+                      className="text-gray-400 hover:text-white transition-colors duration-300 flex items-center group"
+                    >
+                      <ArrowRight className="h-4 w-4 mr-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Contact Info */}
+            <div>
+              <h4 className="text-lg font-semibold text-white mb-6">
+                Get In Touch
+              </h4>
+              <ul className="space-y-4">
+                <li className="flex items-center">
+                  <div className="w-10 h-10 bg-blue-600/20 rounded-lg flex items-center justify-center mr-3">
+                    <span className="text-blue-400">📞</span>
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">
+                      +220 7595999 or +220 390 2798
+                    </p>
+                    <p className="text-gray-400 text-sm">24/7 Support</p>
+                  </div>
+                </li>
+                <li className="flex items-center">
+                  <div className="w-10 h-10 bg-purple-600/20 rounded-lg flex items-center justify-center mr-3">
+                    <span className="text-purple-400">✉️</span>
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">
+                      ker.spacegm@gmail.com
+                    </p>
+                    <p className="text-gray-400 text-sm">Email us anytime</p>
+                  </div>
+                </li>
+                <li className="flex items-start">
+                  <div className="w-10 h-10 bg-green-600/20 rounded-lg flex items-center justify-center mr-3 mt-1">
+                    <span className="text-green-400">📍</span>
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">Turntable</p>
+                    <p className="text-gray-400 text-sm">Brusubi, The Gambia</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center">
+            <p className="text-gray-400 text-center md:text-left">
+              &copy; 2024 KërSpace. All rights reserved. Built with ❤️ for The
+              Gambia.
+            </p>
+            <div className="flex space-x-6 mt-4 md:mt-0">
+              <Link
+                href="/privacy"
+                className="text-gray-400 hover:text-white transition-colors text-sm"
+              >
+                Privacy Policy
+              </Link>
+              <Link
+                href="/terms"
+                className="text-gray-400 hover:text-white transition-colors text-sm"
+              >
+                Terms of Service
+              </Link>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

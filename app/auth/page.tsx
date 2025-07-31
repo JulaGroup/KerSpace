@@ -5,6 +5,7 @@ import { Eye, EyeOff, Home, Mail, Lock, User, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 import { API_URL } from "@/config/constat";
 
 const AuthPage = () => {
@@ -16,6 +17,7 @@ const AuthPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const { login, register } = useAuth();
 
   // Redirect if already logged in
   useEffect(() => {
@@ -38,37 +40,15 @@ const AuthPage = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `${API_URL}/api/auth/login`, // Use API_URL constant
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data && data.token) {
-          toast.success("Signed in successfully!");
-          // Store token for redirect logic
-          if (typeof window !== "undefined") {
-            localStorage.setItem("token", data.token);
-          }
-          const payload = JSON.parse(atob(data.token.split(".")[1]));
-          if (payload.role === "admin") {
-            router.push("/dashboard/");
-          } else {
-            router.push("/");
-          }
-        } else {
-          toast.error("Invalid credentials. Please try again."); // Changed alert to toast
-        }
+      const success = await login(email, password);
+      if (success) {
+        toast.success("Signed in successfully!");
+        // Redirect handled by AuthContext
       } else {
-        toast.error("Login failed. Please try again."); // Changed alert to toast
+        toast.error("Invalid credentials. Please try again.");
       }
     } catch (error: any) {
-      toast.error("An error occurred. Please try again."); // Changed alert to toast
+      toast.error("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -78,15 +58,8 @@ const AuthPage = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const res = await axios.post(
-        `${API_URL}/api/auth/register`, // Use API_URL constant
-        {
-          email,
-          password,
-          name,
-        }
-      );
-      if (res.data.success) {
+      const success = await register(email, password, name);
+      if (success) {
         toast.success("Account created successfully!");
         setMode("login");
         setName("");
@@ -97,9 +70,6 @@ const AuthPage = () => {
         toast.error("Failed to create account. Please try again.");
       }
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.message);
-      }
       toast.error("An error occurred. Please try again.");
       setPassword("");
       setRole("user");

@@ -78,7 +78,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <FavoritesProvider>
-            <HeaderWrapper />
+            <div className="mb-16">
+              <HeaderWrapper />
+            </div>
             {children}
             <Toaster />
           </FavoritesProvider>
