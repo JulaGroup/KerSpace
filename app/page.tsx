@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Header } from "@/components/Header";
 import { SearchBar } from "@/components/SearchBar";
 import { PropertyCard } from "@/components/PropertyCard";
 import { Button } from "@/components/ui/button";
@@ -124,8 +123,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
-      <Header />
-
       {/* Enhanced Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-10">
         {/* Background with enhanced overlay */}
@@ -164,35 +161,16 @@ export default function HomePage() {
                 Your Story Begins
               </span>
             </h1>
-            {/* Enhanced tagline */}
             <div className="space-y-4">
               <p className="text-xl sm:text-2xl lg:text-3xl text-blue-100 font-semibold">
-                Find your space. Live your story
+                Find your space. Live your story.
               </p>
-              <p className="text-lg sm:text-xl lg:text-2xl text-gray-200 max-w-4xl mx-auto leading-relaxed">
-                Redefining real estate in The Gambia and West Africa by
-                connecting you to
-                <span className="text-blue-300 font-medium"> homes</span>,
-                <span className="text-purple-300 font-medium"> apartments</span>
-                ,<span className="text-pink-300 font-medium"> offices</span>,
-                and
-                <span className="text-yellow-300 font-medium"> land</span> — all
-                through
-                <span className="text-blue-300 font-medium">
-                  {" "}
-                  modern technology
-                </span>
-                ,
-                <span className="text-purple-300 font-medium">
-                  {" "}
-                  local expertise
-                </span>
-                , and
-                <span className="text-pink-300 font-medium">
-                  {" "}
-                  total transparency
-                </span>
-                .
+              <p className="text-lg sm:text-xl lg:text-2xl text-gray-200 max-w-3xl mx-auto leading-relaxed">
+                Discover homes, apartments, offices, and land across The Gambia
+                — powered by{" "}
+                <span className="text-blue-300 font-medium">technology</span>,
+                <span className="text-purple-300 font-medium"> trust</span>, and
+                <span className="text-pink-300 font-medium"> simplicity</span>.
               </p>
             </div>
           </div>

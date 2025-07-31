@@ -4,6 +4,8 @@ import { Inter } from "next/font/google";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { Toaster } from "@/components/ui/sonner";
+import { HeaderWrapper } from "@/components/HeaderWrapper";
+import React from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -76,6 +78,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <FavoritesProvider>
+            <HeaderWrapper />
             {children}
             <Toaster />
           </FavoritesProvider>
