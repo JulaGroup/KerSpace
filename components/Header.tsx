@@ -323,13 +323,13 @@ export function Header() {
               onClick={() => setIsMobileMenuOpen(false)}
             />
             <MobileNavItem
-              href="/listings"
-              label="Listings"
+              href="/about"
+              label="About"
               onClick={() => setIsMobileMenuOpen(false)}
             />
             <MobileNavItem
-              href="/about"
-              label="About"
+              href="/listings"
+              label="Listings"
               onClick={() => setIsMobileMenuOpen(false)}
             />
             <MobileNavItem
