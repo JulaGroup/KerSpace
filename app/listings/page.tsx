@@ -232,27 +232,27 @@ export default function ListingsPage() {
             {/* Mobile layout: results + view toggle + filters in a row, equal width */}
             <div className="flex flex-row items-center justify-between gap-3 lg:hidden">
               {/* Results Count - compact, single line, hide 'Found' on mobile */}
-              <div className="flex items-center justify-center px-2 py-2 bg-white/90 backdrop-blur-md rounded-2xl shadow border border-gray-200 w-1/3 min-w-0">
-                <span className="text-xs text-gray-600 font-medium hidden sm:inline">
+              <div className="flex items-center justify-center px-3 py-3 bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 w-1/3 min-w-0">
+                <span className="text-xs text-gray-700 font-medium hidden sm:inline">
                   Found{" "}
                 </span>
                 <span className="font-bold text-base bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   {pagination.total}
                 </span>
-                <span className="text-xs text-gray-600 font-medium ml-1">
+                <span className="text-xs text-gray-700 font-medium ml-1">
                   properties
                 </span>
               </div>
 
               {/* Filters Button */}
-              <div className="w-1/3 min-w-0 flex justify-end">
+              <div className="w-1/3 min-w-0 flex justify-center">
                 <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
                   <SheetTrigger asChild>
-                    <Button className="w-full px-0 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl shadow hover:scale-105 transition-all duration-300 flex items-center justify-center">
+                    <Button className="w-full px-3 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-300 flex items-center justify-center backdrop-blur-xl">
                       <SlidersHorizontal className="mr-2 h-5 w-5" />
                       <span className="hidden xs:inline">Filters</span>
                       {activeFilterCount > 0 && (
-                        <Badge className="ml-2 px-2 py-1 text-xs bg-white/20 text-white rounded-full">
+                        <Badge className="ml-2 px-2 py-1 text-xs bg-white/20 text-white rounded-full border border-white/30">
                           {activeFilterCount}
                         </Badge>
                       )}
@@ -260,9 +260,9 @@ export default function ListingsPage() {
                   </SheetTrigger>
                   <SheetContent
                     side="left"
-                    className="w-full sm:w-96 h-full overflow-y-auto bg-white backdrop-blur-xl border-r-0"
+                    className="w-full sm:w-96 h-full overflow-y-auto bg-white/95 backdrop-blur-xl border-r border-gray-200/50"
                   >
-                    <SheetHeader className="pb-6 border-b border-gray-200">
+                    <SheetHeader className="pb-6 border-b border-gray-200/50">
                       <SheetTitle className="text-2xl font-bold text-gray-900 flex items-center">
                         <Filter className="mr-3 h-6 w-6 text-blue-600" />
                         Filter Properties
@@ -286,15 +286,15 @@ export default function ListingsPage() {
               </div>
 
               {/* View Toggle */}
-              <div className="flex flex-row items-center justify-center bg-white/90 backdrop-blur-md rounded-2xl shadow border border-gray-200 w-1/3 min-w-0 p-1">
+              <div className="flex flex-row items-center justify-center bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 w-1/3 min-w-0 p-1">
                 <Button
                   variant={viewMode === "grid" ? "default" : "ghost"}
                   size="icon"
                   onClick={() => setViewMode("grid")}
                   className={`rounded-xl transition-all h-9 w-9 ${
                     viewMode === "grid"
-                      ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
-                      : "text-gray-600 hover:bg-gray-100"
+                      ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md"
+                      : "text-gray-600 hover:bg-white/50"
                   }`}
                   aria-label="Grid view"
                 >
@@ -306,8 +306,8 @@ export default function ListingsPage() {
                   onClick={() => setViewMode("list")}
                   className={`rounded-xl transition-all h-9 w-9 ml-2 ${
                     viewMode === "list"
-                      ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
-                      : "text-gray-600 hover:bg-gray-100"
+                      ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md"
+                      : "text-gray-600 hover:bg-white/50"
                   }`}
                   aria-label="List view"
                 >
@@ -318,28 +318,28 @@ export default function ListingsPage() {
 
             {/* Desktop layout: results + view toggle spaced below filters */}
             <div className="hidden lg:flex flex-row items-center justify-between gap-4 mt-0">
-              <div className="px-6 py-3 bg-white/90 backdrop-blur-md rounded-2xl shadow border border-gray-200">
-                <span className="text-gray-600 font-medium max-sm:text-base">
+              <div className="px-6 py-3 bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/30">
+                <span className="text-gray-700 font-medium max-sm:text-base">
                   Found{" "}
                 </span>
                 <span className="font-bold text-2xl max-sm:text-xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   {pagination.total}
                 </span>
-                <span className="text-gray-600 max-sm:text-base font-medium">
+                <span className="text-gray-700 max-sm:text-base font-medium">
                   {" "}
                   {pagination.total < 2 ? "property" : "properties"}
                 </span>
               </div>
               <div className="flex items-center space-x-3">
-                <div className="flex bg-white/90 backdrop-blur-md rounded-2xl p-1 shadow border border-gray-200">
+                <div className="flex bg-white/80 backdrop-blur-xl rounded-2xl p-1 shadow-lg border border-white/30">
                   <Button
                     variant={viewMode === "grid" ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setViewMode("grid")}
                     className={`px-4 py-2 rounded-xl transition-all ${
                       viewMode === "grid"
-                        ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
-                        : "text-gray-600 hover:bg-gray-100"
+                        ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md"
+                        : "text-gray-600 hover:bg-white/50"
                     }`}
                   >
                     <Grid3X3 className="h-4 w-4" />
@@ -350,8 +350,8 @@ export default function ListingsPage() {
                     onClick={() => setViewMode("list")}
                     className={`px-4 py-2 rounded-xl transition-all ${
                       viewMode === "list"
-                        ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
-                        : "text-gray-600 hover:bg-gray-100"
+                        ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md"
+                        : "text-gray-600 hover:bg-white/50"
                     }`}
                   >
                     <List className="h-4 w-4" />

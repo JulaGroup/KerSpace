@@ -151,12 +151,13 @@ export default function AboutPage() {
       color: "from-green-500 to-green-600",
     },
   ];
-  // Auto-slide testimonials every 6 seconds
+  // Auto-slide testimonials every 4 seconds
   useEffect(() => {
     if (typeof window === "undefined" || testimonials.length <= 1) return;
     const interval = setInterval(() => {
+      setSlideDirection("right");
       setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
-    }, 6000);
+    }, 4000);
     return () => clearInterval(interval);
   }, [testimonials.length]);
   return (
@@ -489,9 +490,10 @@ export default function AboutPage() {
             </p>
           </div>
 
-          {/* Carousel Controls */}
-          <div className="relative">
-            <div className="flex justify-center items-center mb-8">
+          {/* Enhanced Responsive Carousel */}
+          <div className="relative px-4 sm:px-6 lg:px-8">
+            {/* Navigation Buttons */}
+            <div className="hidden md:flex absolute inset-y-0 left-0 items-center z-10">
               <button
                 aria-label="Previous testimonial"
                 onClick={() => {
@@ -501,78 +503,25 @@ export default function AboutPage() {
                       (prev - 1 + testimonials.length) % testimonials.length
                   );
                 }}
-                className="rounded-full p-2 bg-white shadow hover:bg-pink-100 transition-colors mr-4 disabled:opacity-50"
+                className="rounded-full p-2.5 bg-white shadow-md hover:shadow-lg border border-gray-200 hover:border-gray-300 transition-all duration-300 disabled:opacity-50 transform hover:scale-105"
                 disabled={testimonials.length <= 1}
               >
                 <svg
-                  width="24"
-                  height="24"
+                  width="18"
+                  height="18"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="text-pink-600"
+                  className="text-gray-600"
                 >
                   <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
               </button>
-              <div className="flex-1 max-w-3xl">
-                {/* Slide */}
-                <div className="flex justify-center overflow-hidden min-h-[290px]">
-                  <div
-                    key={activeTestimonial}
-                    className={`bg-white rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 relative w-full max-w-xl
-      ${isVisible ? "opacity-100" : "opacity-0"}
-      ${
-        slideDirection === "right"
-          ? "animate-slide-in-right"
-          : "animate-slide-in-left"
-      }
-    `}
-                    style={{ minHeight: 230 }}
-                  >
-                    <div className="absolute -top-4 left-8">
-                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                        <Quote className="h-4 w-4 text-white" />
-                      </div>
-                    </div>
-                    <div className="mb-6">
-                      <div className="flex items-center mb-4">
-                        {[...Array(testimonials[activeTestimonial].rating)].map(
-                          (_, i) => (
-                            <Star
-                              key={i}
-                              className="h-5 w-5 text-yellow-400 fill-current"
-                            />
-                          )
-                        )}
-                      </div>
-                      <p className="text-gray-600 leading-relaxed text-lg italic">
-                        &quot;{testimonials[activeTestimonial].content}&quot;
-                      </p>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mr-4">
-                        <span className="text-white font-bold text-lg">
-                          {testimonials[activeTestimonial].name.charAt(0)}
-                        </span>
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-gray-900">
-                          {testimonials[activeTestimonial].name}
-                        </h4>
-                        <p className="text-gray-600 text-sm">
-                          {testimonials[activeTestimonial].role}
-                        </p>
-                        <p className="text-gray-500 text-xs">
-                          {testimonials[activeTestimonial].location}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            </div>
+
+            <div className="hidden md:flex absolute inset-y-0 right-0 items-center z-10">
               <button
                 aria-label="Next testimonial"
                 onClick={() => {
@@ -581,30 +530,162 @@ export default function AboutPage() {
                     (prev) => (prev + 1) % testimonials.length
                   );
                 }}
-                className="rounded-full p-2 bg-white shadow hover:bg-pink-100 transition-colors ml-4 disabled:opacity-50"
+                className="rounded-full p-2.5 bg-white shadow-md hover:shadow-lg border border-gray-200 hover:border-gray-300 transition-all duration-300 disabled:opacity-50 transform hover:scale-105"
                 disabled={testimonials.length <= 1}
               >
                 <svg
-                  width="24"
-                  height="24"
+                  width="18"
+                  height="18"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="text-pink-600"
+                  className="text-gray-600"
                 >
                   <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
               </button>
             </div>
-            {/* Dots */}
-            <div className="flex justify-center gap-2 mt-2">
+
+            {/* Testimonial Card Container */}
+            <div className="max-w-3xl mx-auto">
+              <div className="flex justify-center overflow-hidden">
+                <div
+                  key={activeTestimonial}
+                  className={`bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg hover:shadow-xl transition-all duration-700 transform hover:-translate-y-1 border border-gray-200 hover:border-gray-300 relative w-full max-w-2xl mx-4 sm:mx-6
+    ${isVisible ? "opacity-100" : "opacity-0"}
+    ${
+      slideDirection === "right"
+        ? "animate-slide-in-right"
+        : "animate-slide-in-left"
+    }
+  `}
+                >
+                  {/* Minimal Quote Design */}
+                  <div className="flex justify-center mb-4 sm:mb-6">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-gray-600 to-gray-700 rounded-full flex items-center justify-center shadow-sm">
+                      <Quote className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                    </div>
+                  </div>
+
+                  {/* Star Rating */}
+                  <div className="flex items-center justify-center mb-4 sm:mb-6">
+                    {[...Array(testimonials[activeTestimonial].rating)].map(
+                      (_, i) => (
+                        <Star
+                          key={i}
+                          className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500 fill-current mx-0.5"
+                        />
+                      )
+                    )}
+                  </div>
+
+                  {/* Testimonial Content */}
+                  <div className="text-center mb-6 sm:mb-8">
+                    <p className="text-gray-700 leading-relaxed text-base sm:text-lg lg:text-xl italic font-normal px-2 sm:px-4">
+                      &quot;{testimonials[activeTestimonial].content}&quot;
+                    </p>
+                  </div>
+
+                  {/* Author Section */}
+                  <div className="bg-gray-50 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-gray-100">
+                    <div className="flex flex-col sm:flex-row items-center justify-center text-center sm:text-left">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-gray-600 to-gray-700 rounded-full flex items-center justify-center mb-3 sm:mb-0 sm:mr-4 shadow-sm">
+                        <span className="text-white font-semibold text-sm sm:text-base">
+                          {testimonials[activeTestimonial].name.charAt(0)}
+                        </span>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900 text-base sm:text-lg mb-1">
+                          {testimonials[activeTestimonial].name}
+                        </h4>
+                        <p className="text-gray-600 text-sm sm:text-base font-normal mb-1">
+                          {testimonials[activeTestimonial].role}
+                        </p>
+                        <p className="text-gray-500 text-xs sm:text-sm flex items-center justify-center sm:justify-start">
+                          <svg
+                            className="w-3 h-3 sm:w-4 sm:h-4 mr-1"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          {testimonials[activeTestimonial].location}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile Navigation Buttons */}
+            <div className="flex md:hidden justify-center gap-3 mt-6">
+              <button
+                aria-label="Previous testimonial"
+                onClick={() => {
+                  setSlideDirection("left");
+                  setActiveTestimonial(
+                    (prev) =>
+                      (prev - 1 + testimonials.length) % testimonials.length
+                  );
+                }}
+                className="rounded-full p-2.5 bg-white shadow-md hover:shadow-lg border border-gray-200 hover:border-gray-300 transition-all duration-300 disabled:opacity-50 transform hover:scale-105"
+                disabled={testimonials.length <= 1}
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-gray-600"
+                >
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </button>
+              <button
+                aria-label="Next testimonial"
+                onClick={() => {
+                  setSlideDirection("right");
+                  setActiveTestimonial(
+                    (prev) => (prev + 1) % testimonials.length
+                  );
+                }}
+                className="rounded-full p-2.5 bg-white shadow-md hover:shadow-lg border border-gray-200 hover:border-gray-300 transition-all duration-300 disabled:opacity-50 transform hover:scale-105"
+                disabled={testimonials.length <= 1}
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-gray-600"
+                >
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+            </div>
+
+            {/* Enhanced Dots Navigation */}
+            <div className="flex justify-center gap-2 mt-4 sm:mt-6">
               {testimonials.map((_, idx) => (
                 <button
                   key={idx}
-                  className={`w-3 h-3 rounded-full border-2 border-pink-300 ${
-                    activeTestimonial === idx ? "bg-pink-500" : "bg-white"
+                  className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-300 transform hover:scale-110 ${
+                    activeTestimonial === idx
+                      ? "bg-gray-600 shadow-sm"
+                      : "bg-gray-300 hover:bg-gray-400"
                   }`}
                   onClick={() => goToTestimonial(idx)}
                   aria-label={`Go to testimonial ${idx + 1}`}

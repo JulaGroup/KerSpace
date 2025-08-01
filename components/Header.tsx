@@ -18,12 +18,23 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Button } from "./ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "./ui/alert-dialog";
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showSignOutDialog, setShowSignOutDialog] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
   const [userInitials, setUserInitials] = useState<string | null>(null);
   const isAdmin = user?.role === "admin";
@@ -71,6 +82,18 @@ export function Header() {
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, [isMobileMenuOpen, showUserMenu, showNotifications]);
+
+  const handleSignOut = () => {
+    setShowSignOutDialog(true);
+  };
+
+  const confirmSignOut = () => {
+    logout();
+    setShowSignOutDialog(false);
+    setShowUserMenu(false);
+    setIsMobileMenuOpen(false);
+    router.push("/");
+  };
 
   return (
     <header
@@ -235,11 +258,7 @@ export function Header() {
                       <div className="border-t border-gray-100 pt-2">
                         <button
                           className="flex items-center space-x-3 w-full px-4 py-2.5 text-red-600 hover:bg-red-50 transition-all duration-200 group"
-                          onClick={() => {
-                            logout();
-                            setShowUserMenu(false);
-                            router.push("/");
-                          }}
+                          onClick={handleSignOut}
                         >
                           <LogOut className="w-4 h-4 group-hover:scale-110 transition-transform" />
                           <span className="text-sm font-medium">Sign out</span>
@@ -292,34 +311,56 @@ export function Header() {
         <div
           className={`lg:hidden overflow-hidden transition-all duration-500 ease-out ${
             isMobileMenuOpen
-              ? "max-h-96 opacity-100 transform translate-y-0"
+              ? "max-h-[500px] opacity-100 transform translate-y-0"
               : "max-h-0 opacity-0 transform -translate-y-4"
           }`}
         >
           <div className="py-6 space-y-2 border-t border-gray-100/50 backdrop-blur-xl">
-            <MobileNavItem href="/" label="Home" icon={Home} />
-            <MobileNavItem href="/listings" label="Listings" />
-            <MobileNavItem href="/about" label="About" />
-            <MobileNavItem href="/contact" label="Contact" />
+            <MobileNavItem
+              href="/"
+              label="Home"
+              icon={Home}
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+            <MobileNavItem
+              href="/listings"
+              label="Listings"
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+            <MobileNavItem
+              href="/about"
+              label="About"
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+            <MobileNavItem
+              href="/contact"
+              label="Contact"
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+
             {isAuthenticated && (
               <>
                 <MobileNavItem
                   href="/appointments"
                   label="Appointments"
                   icon={Calendar}
+                  onClick={() => setIsMobileMenuOpen(false)}
                 />
                 <MobileNavItem
                   href="/favorites"
                   label="Favorites"
                   icon={Heart}
+                  onClick={() => setIsMobileMenuOpen(false)}
                 />
               </>
             )}
+
             {isAdmin && (
               <MobileNavItem
                 href="/dashboard"
                 label="Dashboard"
                 className="bg-purple-50 border border-purple-200"
+                onClick={() => setIsMobileMenuOpen(false)}
               />
             )}
 
@@ -330,29 +371,22 @@ export function Header() {
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-600 flex items-center justify-center text-white text-sm font-bold">
                       {userInitials}
                     </div>
-                    <div>
-                      {user?.role == "admin" && (
-                        <p className="text-xs text-gray-500 capitalize">
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-gray-900">
+                        {user?.name}
+                      </p>
+                      <p className="text-xs text-gray-500">{user?.email}</p>
+                      {user?.role === "admin" && (
+                        <p className="text-xs text-purple-600 capitalize font-medium">
                           {user?.role}
                         </p>
                       )}
                     </div>
                   </div>
 
-                  <MobileMenuLink
-                    href="/profile"
-                    icon={User}
-                    label="Profile"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  />
-
                   <button
                     className="flex items-center space-x-3 w-full px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl mx-2 transition-all duration-200"
-                    onClick={() => {
-                      logout();
-                      setIsMobileMenuOpen(false);
-                      router.push("/");
-                    }}
+                    onClick={handleSignOut}
                   >
                     <LogOut className="w-4 h-4" />
                     <span className="text-sm font-medium">Sign out</span>
@@ -371,6 +405,35 @@ export function Header() {
           </div>
         </div>
       </div>
+
+      {/* Sign Out Confirmation Dialog */}
+      <AlertDialog open={showSignOutDialog} onOpenChange={setShowSignOutDialog}>
+        <AlertDialogContent className="w-[92vw] max-w-[425px] bg-white/95 backdrop-blur-xl border border-gray-200/50 rounded-3xl shadow-2xl">
+          <AlertDialogHeader className="text-center pb-2">
+            <div className="w-16 h-16 bg-gradient-to-r from-red-100 to-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <LogOut className="h-8 w-8 text-red-600" />
+            </div>
+            <AlertDialogTitle className="text-2xl font-bold text-gray-900 mb-2">
+              Sign Out
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-600 text-base leading-relaxed">
+              Are you sure you want to sign out? You&apos;ll need to sign in
+              again to access your account and saved properties.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex flex-col sm:flex-row gap-3 pt-4">
+            <AlertDialogCancel className="w-full sm:w-auto bg-gray-100 hover:bg-gray-200 text-gray-700 border-0 rounded-2xl py-3 px-6 font-semibold transition-all duration-200">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmSignOut}
+              className="w-full sm:w-auto bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-2xl py-3 px-6 font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+            >
+              Sign Out
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </header>
   );
 }
@@ -412,11 +475,13 @@ function MobileNavItem({
   label,
   icon: Icon,
   className = "",
+  onClick,
 }: {
   href: string;
   label: string;
   icon?: any;
   className?: string;
+  onClick?: () => void;
 }) {
   const pathname = usePathname();
   const isActive = pathname === href;
@@ -429,6 +494,7 @@ function MobileNavItem({
           ? "text-blue-700 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50"
           : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
       } ${className}`}
+      onClick={onClick}
     >
       {Icon && <Icon className="w-4 h-4" />}
       <span>{label}</span>
