@@ -37,6 +37,9 @@ import {
   Grid3X3,
   List,
   TrendingUp,
+  ChevronLeft,
+  ChevronRight,
+  MoreHorizontal,
 } from "lucide-react";
 import axios from "axios";
 import { SkeletonPropertyCard } from "@/components/dashboard/SkeletonPropertyCard";
@@ -51,6 +54,13 @@ export default function ListingsPage() {
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [isVisible, setIsVisible] = useState(false);
+  const [pagination, setPagination] = useState({
+    total: 0,
+    offset: 0,
+    limit: 12,
+    hasMore: false,
+  });
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     setIsVisible(true);
@@ -66,17 +76,28 @@ export default function ListingsPage() {
           if (value !== undefined && value !== null && value !== "")
             params.set(key, value.toString());
         });
+        // Add pagination params
+        params.set("limit", pagination.limit.toString());
+        params.set("offset", ((currentPage - 1) * pagination.limit).toString());
+
         const url = `${API_URL}/api/properties/search?${params.toString()}`;
         const res = await axios.get(url);
-        setFilteredProperties(res.data);
+        setFilteredProperties(res.data.properties);
+        setPagination(res.data.pagination);
       } catch (err) {
         setFilteredProperties([]);
+        setPagination({
+          total: 0,
+          offset: 0,
+          limit: 12,
+          hasMore: false,
+        });
       } finally {
         setLoading(false);
       }
     }
     fetchFilteredProperties();
-  }, [filters]);
+  }, [filters, currentPage, pagination.limit]);
 
   useEffect(() => {
     const initialFilters: PropertyFilters = {};
@@ -130,12 +151,21 @@ export default function ListingsPage() {
   const applyFilters = () => {
     setFilters(pendingFilters);
     setIsFilterOpen(false);
+    setCurrentPage(1); // Reset to first page when filters change
   };
 
   const clearFilters = () => {
     setPendingFilters({});
     setFilters({});
+    setCurrentPage(1); // Reset to first page when clearing filters
   };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const totalPages = Math.ceil(pagination.total / pagination.limit);
 
   const activeFilterCount =
     Object.values(pendingFilters).filter(Boolean).length;
@@ -144,7 +174,7 @@ export default function ListingsPage() {
   if (loading && filters === null) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
-        <Header />
+        {/* <Header /> */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
           <div className="animate-pulse">
             <div className="h-8 bg-gray-200 rounded-xl w-64 mb-6"></div>
@@ -162,8 +192,6 @@ export default function ListingsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
-      <Header />
-
       {/* Hero Section */}
       <section className="relative pt-8 pb-6 overflow-hidden">
         {/* Backgrounds */}
@@ -209,41 +237,13 @@ export default function ListingsPage() {
                   Found{" "}
                 </span>
                 <span className="font-bold text-base bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  {filteredProperties.length}
+                  {pagination.total}
                 </span>
                 <span className="text-xs text-gray-600 font-medium ml-1">
                   properties
                 </span>
               </div>
-              {/* View Toggle */}
-              <div className="flex flex-row items-center justify-center bg-white/90 backdrop-blur-md rounded-2xl shadow border border-gray-200 w-1/3 min-w-0 p-1">
-                <Button
-                  variant={viewMode === "grid" ? "default" : "ghost"}
-                  size="icon"
-                  onClick={() => setViewMode("grid")}
-                  className={`rounded-xl transition-all h-9 w-9 ${
-                    viewMode === "grid"
-                      ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
-                      : "text-gray-600 hover:bg-gray-100"
-                  }`}
-                  aria-label="Grid view"
-                >
-                  <Grid3X3 className="h-5 w-5" />
-                </Button>
-                <Button
-                  variant={viewMode === "list" ? "default" : "ghost"}
-                  size="icon"
-                  onClick={() => setViewMode("list")}
-                  className={`rounded-xl transition-all h-9 w-9 ml-2 ${
-                    viewMode === "list"
-                      ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
-                      : "text-gray-600 hover:bg-gray-100"
-                  }`}
-                  aria-label="List view"
-                >
-                  <List className="h-5 w-5" />
-                </Button>
-              </div>
+
               {/* Filters Button */}
               <div className="w-1/3 min-w-0 flex justify-end">
                 <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
@@ -284,6 +284,36 @@ export default function ListingsPage() {
                   </SheetContent>
                 </Sheet>
               </div>
+
+              {/* View Toggle */}
+              <div className="flex flex-row items-center justify-center bg-white/90 backdrop-blur-md rounded-2xl shadow border border-gray-200 w-1/3 min-w-0 p-1">
+                <Button
+                  variant={viewMode === "grid" ? "default" : "ghost"}
+                  size="icon"
+                  onClick={() => setViewMode("grid")}
+                  className={`rounded-xl transition-all h-9 w-9 ${
+                    viewMode === "grid"
+                      ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                      : "text-gray-600 hover:bg-gray-100"
+                  }`}
+                  aria-label="Grid view"
+                >
+                  <Grid3X3 className="h-5 w-5" />
+                </Button>
+                <Button
+                  variant={viewMode === "list" ? "default" : "ghost"}
+                  size="icon"
+                  onClick={() => setViewMode("list")}
+                  className={`rounded-xl transition-all h-9 w-9 ml-2 ${
+                    viewMode === "list"
+                      ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                      : "text-gray-600 hover:bg-gray-100"
+                  }`}
+                  aria-label="List view"
+                >
+                  <List className="h-5 w-5" />
+                </Button>
+              </div>
             </div>
 
             {/* Desktop layout: results + view toggle spaced below filters */}
@@ -293,11 +323,11 @@ export default function ListingsPage() {
                   Found{" "}
                 </span>
                 <span className="font-bold text-2xl max-sm:text-xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  {filteredProperties.length}
+                  {pagination.total}
                 </span>
                 <span className="text-gray-600 max-sm:text-base font-medium">
                   {" "}
-                  {filteredProperties.length < 2 ? "property" : "properties"}
+                  {pagination.total < 2 ? "property" : "properties"}
                 </span>
               </div>
               <div className="flex items-center space-x-3">
@@ -340,35 +370,38 @@ export default function ListingsPage() {
           <div className="w-full">
             {loading ? (
               <div
-                className={`grid ${
+                className={`${
                   viewMode === "grid"
-                    ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-                    : "grid-cols-1 gap-4"
+                    ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                    : "flex flex-col space-y-4"
                 }`}
               >
                 {Array.from({ length: 12 }).map((_, i) => (
-                  <SkeletonPropertyCard key={i} />
+                  <SkeletonPropertyCard key={i} viewMode={viewMode} />
                 ))}
               </div>
             ) : filteredProperties.length > 0 ? (
               <div
-                className={`grid ${
+                className={`${
                   viewMode === "grid"
-                    ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-                    : "grid-cols-1 gap-4"
+                    ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                    : "flex flex-col space-y-4"
                 } transition-all duration-500`}
               >
                 {filteredProperties.map((property, index) => (
                   <div
                     key={property._id}
-                    className={`transition-all duration-500 hover:scale-105 ${
+                    className={`transition-all duration-500 ${
+                      viewMode === "grid"
+                        ? "hover:scale-105"
+                        : "hover:shadow-lg"
+                    } ${
                       isVisible
                         ? "opacity-100 translate-y-0"
                         : "opacity-0 translate-y-10"
                     }`}
-                    style={{ transitionDelay: `${index * 50}ms` }}
                   >
-                    <PropertyCard property={property} />
+                    <PropertyCard property={property} viewMode={viewMode} />
                   </div>
                 ))}
               </div>
@@ -399,6 +432,160 @@ export default function ListingsPage() {
               </div>
             )}
           </div>
+
+          {/* Enhanced Pagination Component */}
+          {!loading && filteredProperties.length > 0 && (
+            <div className="mt-12 flex flex-col items-center space-y-6">
+              {/* Pagination Info */}
+              <div className="text-center">
+                <p className="text-gray-600 text-sm md:text-base">
+                  Showing{" "}
+                  <span className="font-semibold text-gray-900">
+                    {pagination.offset + 1}
+                  </span>{" "}
+                  to{" "}
+                  <span className="font-semibold text-gray-900">
+                    {Math.min(
+                      pagination.offset + pagination.limit,
+                      pagination.total
+                    )}
+                  </span>{" "}
+                  of{" "}
+                  <span className="font-semibold text-gray-900">
+                    {pagination.total}
+                  </span>{" "}
+                  results
+                </p>
+              </div>
+
+              {/* Desktop Pagination */}
+              <div className="hidden md:flex items-center space-x-2">
+                {/* Previous Button */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-all duration-200"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+
+                {/* Page Numbers */}
+                {totalPages > 1 && (
+                  <div className="flex items-center space-x-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                      .filter((page) => {
+                        // Show first page, last page, current page, and pages around current page
+                        if (page === 1 || page === totalPages) return true;
+                        if (Math.abs(page - currentPage) <= 1) return true;
+                        return false;
+                      })
+                      .map((page, index, array) => {
+                        // Add ellipsis if there's a gap
+                        const showEllipsisBefore =
+                          index > 0 && page - array[index - 1] > 1;
+
+                        return (
+                          <div
+                            key={page}
+                            className="flex items-center space-x-1"
+                          >
+                            {showEllipsisBefore && (
+                              <div className="px-2 py-1 text-gray-400">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </div>
+                            )}
+                            <Button
+                              variant={
+                                currentPage === page ? "default" : "ghost"
+                              }
+                              size="sm"
+                              onClick={() => handlePageChange(page)}
+                              className={`min-w-[40px] h-10 rounded-xl transition-all duration-200 ${
+                                currentPage === page
+                                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:shadow-xl"
+                                  : "text-gray-700 hover:bg-gray-100"
+                              }`}
+                            >
+                              {page}
+                            </Button>
+                          </div>
+                        );
+                      })}
+                  </div>
+                )}
+
+                {/* Next Button */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-all duration-200"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+
+              {/* Mobile Pagination */}
+              <div className="md:hidden flex flex-col items-center space-y-4 w-full">
+                {/* Mobile Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-between w-full max-w-xs">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="flex items-center px-3 py-2 bg-white border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm font-medium text-gray-700">
+                        Page {currentPage} of {totalPages}
+                      </span>
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="flex items-center px-3 py-2 bg-white border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {/* Jump to Page (Desktop only) */}
+              <div className="hidden lg:flex items-center space-x-3">
+                <span className="text-sm text-gray-600">Jump to page:</span>
+                <div className="flex items-center space-x-2">
+                  <Input
+                    type="number"
+                    min="1"
+                    max={totalPages}
+                    value={currentPage}
+                    onChange={(e) => {
+                      const page = parseInt(e.target.value);
+                      if (page >= 1 && page <= totalPages) {
+                        handlePageChange(page);
+                      }
+                    }}
+                    className="w-16 h-8 text-center text-sm border-gray-200 rounded-lg"
+                  />
+                  <span className="text-sm text-gray-500">of {totalPages}</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
