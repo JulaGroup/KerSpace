@@ -37,10 +37,14 @@ export function AppointmentList() {
           axios.get(`${API_URL}/api/admin/appointments`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get(`${API_URL}/api/properties`),
+          axios.get(`${API_URL}/api/properties/search?limit=1000`),
         ]);
         setAppointments(Array.isArray(appsRes.data) ? appsRes.data : []);
-        setProperties(Array.isArray(propsRes.data) ? propsRes.data : []);
+        setProperties(
+          Array.isArray(propsRes.data.properties)
+            ? propsRes.data.properties
+            : []
+        );
       } catch (err: any) {
         setError(err?.message || "Failed to fetch appointments");
         setAppointments([]);

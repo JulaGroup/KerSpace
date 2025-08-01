@@ -261,6 +261,9 @@ export default function ListingsPage() {
                   <SheetContent
                     side="left"
                     className="w-full sm:w-96 h-full overflow-y-auto bg-white/95 backdrop-blur-xl border-r border-gray-200/50"
+                    onOpenAutoFocus={(event) => {
+                      event.preventDefault();
+                    }}
                   >
                     <SheetHeader className="pb-6 border-b border-gray-200/50">
                       <SheetTitle className="text-2xl font-bold text-gray-900 flex items-center">

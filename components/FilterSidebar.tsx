@@ -101,6 +101,7 @@ export const FilterSidebar = ({
               value={filters.location || ""}
               onChange={(e) => updateFilter("location", e.target.value)}
               className={`pl-10 ${inputSizeClass} w-full`}
+              autoFocus={false}
             />
           </div>
         </div>

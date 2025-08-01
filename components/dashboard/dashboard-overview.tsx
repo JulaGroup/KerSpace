@@ -28,12 +28,14 @@ export function DashboardOverview() {
         const appsRes = await fetch(`${API_URL}/api/appointments`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const propsRes = await fetch(`${API_URL}/api/properties`);
+        const propsRes = await fetch(
+          `${API_URL}/api/properties/search?limit=1000`
+        );
         const apps = await appsRes.json();
-        const props = await propsRes.json();
+        const propsData = await propsRes.json();
         if (mounted) {
           setAppointments(apps);
-          setListings(props);
+          setListings(propsData.properties || []);
           setLoading(false);
         }
       } catch (err) {
@@ -62,12 +64,14 @@ export function DashboardOverview() {
   }
 
   // Analytics
-  const totalProperties = listings.length;
-  const activeListings = listings.filter(
-    (l: any) => l.approvalStatus === "approved"
-  ).length;
+  const totalProperties = Array.isArray(listings) ? listings.length : 0;
+  const activeListings = Array.isArray(listings)
+    ? listings.filter((l: any) => l.approvalStatus === "approved").length
+    : 0;
   const totalClients = 42; // Replace with real logic if available
-  const pendingAppointments = appointments.length;
+  const pendingAppointments = Array.isArray(appointments)
+    ? appointments.length
+    : 0;
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

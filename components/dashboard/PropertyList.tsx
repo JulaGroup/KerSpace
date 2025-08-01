@@ -74,9 +74,9 @@ export default function PropertyList({ refresh, onEdit }: PropertyListProps) {
       setLoading(true);
       try {
         const res = await axios.get(
-          `${API_URL}/api/properties` // Use API_URL constant
+          `${API_URL}/api/properties/search?limit=1000` // Use search endpoint with high limit for dashboard
         );
-        setProperties(res.data);
+        setProperties(res.data.properties || []);
       } catch (err) {
         setProperties([]);
       } finally {
