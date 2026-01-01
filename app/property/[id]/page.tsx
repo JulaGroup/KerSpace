@@ -735,7 +735,10 @@ export default function PropertyDetailPage() {
                           Price
                         </div>
                         <div className="text-2xl lg:text-3xl xl:text-4xl font-bold text-white mb-2 break-words drop-shadow-lg leading-tight">
-                          {formatPrice(property.price!, property.currency || "GMD")}
+                          {formatPrice(
+                            property.price!,
+                            property.currency || "GMD"
+                          )}
                         </div>
                         {property.status === "for-rent" && (
                           <span className="text-lg text-gray-300 font-medium">
@@ -1882,7 +1885,10 @@ export default function PropertyDetailPage() {
                     lng={property.location.coordinates.lng}
                     title={property.title}
                     address={property.location.address}
-                    price={formatPrice(property.price || 0, property.currency || "GMD")}
+                    price={formatPrice(
+                      property.price || 0,
+                      property.currency || "GMD"
+                    )}
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg sm:rounded-xl flex items-center justify-center">
