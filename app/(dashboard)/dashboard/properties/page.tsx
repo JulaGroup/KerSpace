@@ -177,11 +177,13 @@ export default function PropertiesPage() {
         location: {
           address: formProperty.address,
           city: formProperty.city,
-          state: formProperty.state, // Add state to payload
-          country: formProperty.country, // Add country to payload
-          lat: formProperty.lat ? Number(formProperty.lat) : undefined, // Convert to number
-          lng: formProperty.lng ? Number(formProperty.lng) : undefined, // Convert to number
-          phone: formProperty.phone, // Add phone to payload
+          state: formProperty.state,
+          country: formProperty.country,
+          coordinates: {
+            lat: formProperty.lat ? Number(formProperty.lat) : undefined,
+            lng: formProperty.lng ? Number(formProperty.lng) : undefined,
+          },
+          phone: formProperty.phone,
         },
         price: Number(formProperty.price),
         type: formProperty.type,
@@ -189,7 +191,7 @@ export default function PropertiesPage() {
         bathrooms: Number(formProperty.bathrooms),
         size: Number(formProperty.size),
         images: urls,
-        featured: formProperty.featured, // Add featured to payload
+        featured: formProperty.featured,
         available:
           typeof formProperty.available === "boolean"
             ? formProperty.available

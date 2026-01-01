@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSelectedLayoutSegment } from "next/navigation";
 import "../styles/globals.css";
+import Image from "next/image";
 const NavBar = () => {
   const router = useRouter();
   const isDashboard = useSelectedLayoutSegment();
@@ -37,9 +38,7 @@ const NavBar = () => {
       <nav className="w-full bg-white px-4 py-2 flex justify-between items-center">
         {/* {showSignIn && <SignInCompo setShowSignIn={setShowSignIn} />}
         {showSignUp && <SignUpCompo setShowSignUp={setShowSignUp} />} */}
-        <h1 className="sniglet-extrabold text-3xl drop-shadow-lg text-black">
-          Kër<span className="text-blue-500">Spaces</span>
-        </h1>
+        <Image src="/logo.png" alt="logo" width={100} height={100} />
         <div className="list flex gap-14 font-semibold text-lg max-sm:hidden">
           <Link
             className={`hover-underline-animation text-black ${

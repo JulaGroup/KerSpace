@@ -64,6 +64,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import LoadingPage from "@/app/loading";
+import dynamic from "next/dynamic";
+
+// Dynamically import PropertyMap to avoid SSR issues with Leaflet
+const PropertyMap = dynamic(
+  () => import("@/components/PropertyMap").then((mod) => mod.PropertyMap),
+  { ssr: false }
+);
 
 export default function PropertyDetailPage() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -957,9 +964,67 @@ export default function PropertyDetailPage() {
                       About This Property
                     </h3>
                   </div>
-                  <p className="text-gray-600 leading-relaxed text-base sm:text-lg">
-                    {property.description}
-                  </p>
+                  <div className="text-gray-600 leading-relaxed text-base sm:text-lg space-y-4">
+                    {(() => {
+                      const lines = property.description.split("\n");
+                      const elements = [];
+                      let i = 0;
+
+                      while (i < lines.length) {
+                        const line = lines[i].trim();
+
+                        // Skip empty lines
+                        if (!line) {
+                          i++;
+                          continue;
+                        }
+
+                        // Check if this is a bullet point
+                        if (line.startsWith("-")) {
+                          // Collect all consecutive bullet points
+                          const bullets = [];
+                          let introLine = i > 0 ? lines[i - 1].trim() : "";
+
+                          // Check if previous line ends with colon (intro text)
+                          if (introLine.endsWith(":") && elements.length > 0) {
+                            // Remove the last element (intro text) to re-add it properly
+                            elements.pop();
+                          } else {
+                            introLine = "";
+                          }
+
+                          while (
+                            i < lines.length &&
+                            lines[i].trim().startsWith("-")
+                          ) {
+                            bullets.push(lines[i].trim().substring(1).trim());
+                            i++;
+                          }
+
+                          elements.push(
+                            <div key={`bullets-${i}`}>
+                              {introLine && (
+                                <p className="mb-3 font-medium">{introLine}</p>
+                              )}
+                              <ul className="list-disc list-inside space-y-2 ml-4">
+                                {bullets.map((bullet, idx) => (
+                                  <li key={idx} className="text-gray-600">
+                                    {bullet}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          );
+                        } else {
+                          // Regular paragraph
+                          elements.push(<p key={`p-${i}`}>{line}</p>);
+                          i++;
+                        }
+                      }
+
+                      return elements;
+                    })()}
+                  </div>
                 </div>
 
                 {/* Property Information Grid */}
@@ -1806,14 +1871,27 @@ export default function PropertyDetailPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="aspect-video bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg sm:rounded-xl flex items-center justify-center mb-4 sm:mb-6 min-h-[150px] sm:min-h-[200px]">
-                <div className="text-center">
-                  <MapPin className="h-16 w-16 text-emerald-600 mx-auto mb-4" />
-                  <p className="text-gray-700 text-lg font-medium">
-                    Interactive Map
-                  </p>
-                  <p className="text-gray-500">Coming soon</p>
-                </div>
+              <div className="aspect-video rounded-lg sm:rounded-xl mb-4 sm:mb-6 min-h-[150px] sm:min-h-[200px]">
+                {property.location.coordinates?.lat &&
+                property.location.coordinates?.lng ? (
+                  <PropertyMap
+                    lat={property.location.coordinates.lat}
+                    lng={property.location.coordinates.lng}
+                    title={property.title}
+                    address={property.location.address}
+                    price={`D${property.price.toLocaleString()}`}
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg sm:rounded-xl flex items-center justify-center">
+                    <div className="text-center">
+                      <MapPin className="h-16 w-16 text-emerald-600 mx-auto mb-4" />
+                      <p className="text-gray-700 text-lg font-medium">
+                        Interactive Map
+                      </p>
+                      <p className="text-gray-500">Location coordinates not available</p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">

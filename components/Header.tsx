@@ -28,6 +28,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "./ui/alert-dialog";
+import Image from "next/image";
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -107,29 +108,14 @@ export function Header() {
         <div className="flex items-center justify-between h-20">
           {/* Enhanced Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
-            <div className="relative">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-700 rounded-2xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg group-hover:shadow-xl">
-                <Home className="w-5 h-5 text-white" />
-              </div>
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 animate-pulse">
-                <Sparkles className="w-2 h-2 text-white m-0.5" />
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-2xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-indigo-900 bg-clip-text text-transparent">
-                KërSpace
-              </span>
-              <span className="text-xs text-gray-500 -mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                Find your perfect space
-              </span>
-            </div>
+            <Image src="/logo.png" alt="logo" width={70} height={70} />
           </Link>
 
           {/* Enhanced Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-1">
             <NavItem href="/" label="Home" icon={Home} />
-            <NavItem href="/listings" label="Listings" />
             <NavItem href="/about" label="About" />
+            <NavItem href="/listings" label="Listings" />
             <NavItem href="/contact" label="Contact" />
             {isAdmin && (
               <NavItem

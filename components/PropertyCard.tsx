@@ -106,7 +106,7 @@ export function PropertyCard({
               variant="ghost"
               size="sm"
               className={cn(
-                "absolute z-10 h-7 w-7 rounded-full bg-white/90 hover:bg-white shadow-sm",
+                "absolute z-10 h-10 w-10 rounded-full bg-white/90 hover:bg-white shadow-sm",
                 viewMode === "list" ? "bottom-2 left-2" : "top-2 right-2",
                 showApprovalStatus && viewMode !== "list" && "right-16"
               )}
@@ -117,7 +117,7 @@ export function PropertyCard({
             >
               <Heart
                 className={cn(
-                  "h-3.5 w-3.5",
+                  "h-5 w-5",
                   isFavorite(property._id)
                     ? "fill-red-500 text-red-500"
                     : "text-gray-600"

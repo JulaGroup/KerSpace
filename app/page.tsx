@@ -108,15 +108,15 @@ export default function HomePage() {
       color: "from-pink-400 to-pink-600",
       hoverColor: "hover:shadow-pink-500/25",
     },
-    {
-      icon: CheckCircle,
-      title: "Secure Transactions",
-      description:
-        "Safe and secure property transactions with full documentation.",
-      link: "/services/secure-transactions",
-      color: "from-green-400 to-green-600",
-      hoverColor: "hover:shadow-green-500/25",
-    },
+    // {
+    //   icon: CheckCircle,
+    //   title: "Secure Transactions",
+    //   description:
+    //     "Safe and secure property transactions with full documentation.",
+    //   link: "/services/secure-transactions",
+    //   color: "from-green-400 to-green-600",
+    //   hoverColor: "hover:shadow-green-500/25",
+    // },
   ];
 
   const router = useRouter();
@@ -401,7 +401,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 jus">
             {services.map((service, index) => {
               const Icon = service.icon;
               return (
@@ -529,8 +529,14 @@ export default function HomePage() {
 
           <div className="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-center md:text-left">
-              &copy; 2024 KërSpace. All rights reserved. Built with ❤️ for The
-              Gambia.
+              &copy; 2024 KërSpace. All rights reserved. Powered by
+              <Image
+                src="/terango-logo.jpg"
+                alt="TeranGO"
+                width={120}
+                height={50}
+                className="inline-block ml-2"
+              />
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link

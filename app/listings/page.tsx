@@ -52,7 +52,7 @@ export default function ListingsPage() {
   const [pendingFilters, setPendingFilters] = useState<PropertyFilters>({});
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const [isVisible, setIsVisible] = useState(false);
   const [pagination, setPagination] = useState({
     total: 0,
