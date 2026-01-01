@@ -10,62 +10,98 @@ import React from "react";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "KërSpace - Modern Real Estate Platform",
+  title: "KërSpace | The Property Hub of The Gambia – Buy, Rent & Invest",
   description:
-    "Find your perfect property with our comprehensive real estate platform",
+    "KërSpace is The Gambia’s trusted property hub to buy, rent, sell, and invest in homes, apartments, offices, and land. Verified listings, local expertise, and diaspora-friendly real estate solutions.",
+
   keywords: [
-    "real estate",
-    "property",
-    "homes for sale",
-    "apartments for rent",
-    "real estate listings",
-    "buy a house",
-    "sell a house",
-    "real estate agent",
-    "property management",
-    "mortgage calculator",
-    "real estate investment",
-    "commercial real estate",
-    "residential real estate",
-    "real estate market",
-    "real estate news",
-    "real estate trends",
-    "real estate tips",
-    "real estate advice",
-    "real estate services",
-    "real estate platform",
-    "real estate search",
-    "property search",
-    "real estate website",
-    "Gambia real estate",
-    "Gambia property",
-    "Gambia homes for sale",
-    "Gambia apartments for rent",
-    "Gambia real estate listings",
+    // Brand
+    "KërSpace",
+    "Kerspace Gambia",
+
+    // Core intent
+    "property hub Gambia",
+    "real estate Gambia",
+    "buy property in Gambia",
+    "rent property in Gambia",
+    "sell property in Gambia",
+    "invest in property Gambia",
+
+    // Property types
+    "houses for sale Gambia",
+    "apartments for rent Gambia",
+    "land for sale Gambia",
+    "commercial property Gambia",
+    "office space Gambia",
+    "luxury apartments Gambia",
+    "beachfront property Gambia",
+
+    // Audience targeting
+    "Gambians in diaspora real estate",
+    "expat housing Gambia",
+    "moving to Gambia housing",
+    "tourist accommodation Gambia",
+
+    // Trust & value
+    "verified properties Gambia",
+    "trusted real estate platform Gambia",
+    "secure property transactions Gambia",
+
+    // Location variations
     "The Gambia real estate",
-    "The Gambia property",
-    "The Gambia homes for sale",
-    "The Gambia apartments for rent",
-    "The Gambia real estate listings",
-    "Gambia real estate market",
-    "Gambia real estate news",
-    "Gambia real estate trends",
-    "Gambia real estate tips",
-    "Gambia real estate advice",
-    "Gambia real estate services",
-    "Gambia real estate platform",
-    "Gambia property search",
-    "Gambia real estate search",
-    "Gambia real estate website",
-    "The Gambia real estate market",
+    "Serrekunda property",
+    "Senegambia apartments",
+    "Brusubi property",
+    "Bijilo real estate",
+    "Brufut land for sale",
+
+    // Platform & search
+    "property listings Gambia",
+    "real estate listings Gambia",
+    "property search Gambia",
+    "real estate website Gambia",
   ],
+
   authors: [
     {
       name: "KërSpace",
-      url: "https://KërSpace.com",
+      url: "https://kerspace.gm",
     },
   ],
+
   creator: "KërSpace",
+
+  openGraph: {
+    title: "KërSpace | The Property Hub of The Gambia",
+    description:
+      "Discover verified homes, apartments, offices, and land across The Gambia. Buy, rent, sell, and invest with confidence on KërSpace.",
+    url: "https://kerspace.gm",
+    siteName: "KërSpace",
+    // images: [
+    //   {
+    //     url: "https://kerspace.gm/og-image.jpg",
+    //     width: 1200,
+    //     height: 630,
+    //     alt: "KërSpace – The Property Hub of The Gambia",
+    //   },
+    // ],
+    locale: "en_GM",
+    type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "KërSpace | The Property Hub of The Gambia",
+    description:
+      "Buy, rent, sell, and invest in verified properties across The Gambia. Trusted by locals, diaspora, and expats.",
+    // images: ["https://kerspace.gm/og-image.jpg"],
+    creator: "@kerspacegm",
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
