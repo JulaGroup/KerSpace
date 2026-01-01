@@ -31,12 +31,14 @@ export function PropertyCard({
     isAuthenticated = !!token;
   }
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-GB", {
-      style: "currency",
-      currency: "GMD",
-      minimumFractionDigits: 0,
-    }).format(price);
+  const formatPrice = (price: number, currency: string = "GMD") => {
+    const currencySymbols: Record<string, string> = {
+      GMD: "D",
+      USD: "$",
+      GBP: "£",
+    };
+    const symbol = currencySymbols[currency] || "D";
+    return `${symbol}${new Intl.NumberFormat("en-US").format(price)}`;
   };
 
   const getStatusBadge = () => {
@@ -171,7 +173,7 @@ export function PropertyCard({
 
                 <div className="flex flex-col items-start sm:items-end">
                   <div className="text-base sm:text-lg font-bold text-blue-600 whitespace-nowrap">
-                    {formatPrice(property.price!)}
+                    {formatPrice(property.price!, property.currency || "GMD")}
                     {property.status === "for-rent" && (
                       <span className="text-[10px] font-normal text-gray-500 block">
                         /month
@@ -235,7 +237,7 @@ export function PropertyCard({
 
               <div className="flex items-center justify-between">
                 <div className="text-2xl font-bold text-blue-600">
-                  {formatPrice(property.price!)}
+                  {formatPrice(property.price!, property.currency || "GMD")}
                   {property.status === "for-rent" && (
                     <span className="text-sm font-normal text-gray-500">
                       /month
@@ -268,11 +270,11 @@ export function PropertyCard({
                 </div>
                 {property.type === "apartment" && (
                   <>
-                    <div className="flex items-center">
+                    {/* <div className="flex items-center">
                       <span className="font-semibold text-blue-700 ml-2">
                         Units: {property.totalUnits ?? "-"}
                       </span>
-                    </div>
+                    </div> */}
                     <div className="flex items-center">
                       <span className="font-semibold text-green-700 ml-2">
                         Available: {property.availableUnits ?? "-"}

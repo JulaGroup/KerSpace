@@ -24,6 +24,7 @@ type Property = {
   city: string;
   status: "for-sale" | "for-rent";
   price: string;
+  currency?: "GMD" | "USD" | "GBP";
   // state?: string;
   // country?: string;
   location: {
@@ -68,6 +69,17 @@ export default function PropertyList({ refresh, onEdit }: PropertyListProps) {
   const [deleting, setDeleting] = useState(false);
   const [viewMode, setViewMode] = useState<"thumbnail" | "list">("thumbnail");
   const [selectedImageIdx, setSelectedImageIdx] = useState(0);
+
+  // Format price with currency
+  const formatPrice = (price: string, currency: string = "GMD") => {
+    const currencySymbols: Record<string, string> = {
+      GMD: "D",
+      USD: "$",
+      GBP: "£",
+    };
+    const symbol = currencySymbols[currency] || "D";
+    return `${symbol}${Number(price).toLocaleString()}`;
+  };
 
   useEffect(() => {
     async function fetchProperties() {
@@ -200,7 +212,7 @@ export default function PropertyList({ refresh, onEdit }: PropertyListProps) {
                       {property.location!.address}, {property.location!.city}
                     </span>
                     <span className="text-blue-300 font-bold text-lg">
-                      GMD{property.price.toLocaleString()}
+                      {formatPrice(property.price, property.currency || "GMD")}
                     </span>
                     <span className="text-xs text-gray-400">
                       {property.bedrooms} bed • {property.bathrooms} bath •{" "}
@@ -290,7 +302,7 @@ export default function PropertyList({ refresh, onEdit }: PropertyListProps) {
                     {property.location.address}, {property.location!.city}
                   </span>
                   <span className="text-blue-300 font-bold text-base block">
-                    GMD{property.price.toLocaleString()}
+                    {formatPrice(property.price, property.currency || "GMD")}
                   </span>
                   <span className="text-xs text-gray-400">
                     {property.bedrooms} bed • {property.bathrooms} bath •{" "}

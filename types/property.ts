@@ -3,6 +3,7 @@ export interface Property {
   title: string;
   description?: string;
   price?: number;
+  currency?: "GMD" | "USD" | "GBP";
   size?: number;
   bedrooms?: number;
   bathrooms?: number;

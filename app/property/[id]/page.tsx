@@ -118,6 +118,18 @@ export default function PropertyDetailPage() {
   const [isRequestingInfo, setIsRequestingInfo] = useState(false);
   // Login prompt dialog state
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+
+  // Format price with currency
+  const formatPrice = (price: number, currency: string = "GMD") => {
+    const currencySymbols: Record<string, string> = {
+      GMD: "D",
+      USD: "$",
+      GBP: "£",
+    };
+    const symbol = currencySymbols[currency] || "D";
+    return `${symbol}${new Intl.NumberFormat("en-US").format(price)}`;
+  };
+
   // Helper for protected actions
   const handleProtectedAction = (action: () => void) => {
     if (!isAuthenticated) {
@@ -323,15 +335,6 @@ export default function PropertyDetailPage() {
       </div>
     );
   }
-
-  const formatPrice = (price: number) => {
-    return (
-      new Intl.NumberFormat("en-GM", {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(price) + " GMD"
-    );
-  };
 
   const nextImage = () => {
     setCurrentImageIndex((prev) =>
@@ -732,7 +735,7 @@ export default function PropertyDetailPage() {
                           Price
                         </div>
                         <div className="text-2xl lg:text-3xl xl:text-4xl font-bold text-white mb-2 break-words drop-shadow-lg leading-tight">
-                          {formatPrice(property.price!)}
+                          {formatPrice(property.price!, property.currency || "GMD")}
                         </div>
                         {property.status === "for-rent" && (
                           <span className="text-lg text-gray-300 font-medium">
@@ -1879,7 +1882,7 @@ export default function PropertyDetailPage() {
                     lng={property.location.coordinates.lng}
                     title={property.title}
                     address={property.location.address}
-                    price={`D${property.price?.toLocaleString() ?? '0'}`}
+                    price={formatPrice(property.price || 0, property.currency || "GMD")}
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg sm:rounded-xl flex items-center justify-center">

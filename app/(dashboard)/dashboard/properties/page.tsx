@@ -23,6 +23,7 @@ type Property = {
   city: string;
   status: "for-sale" | "for-rent";
   price: string;
+  currency?: "GMD" | "USD" | "GBP";
   state?: string;
   country?: string;
   featured?: boolean;
@@ -49,6 +50,7 @@ const emptyProperty: Property = {
   city: "",
   status: "for-sale",
   price: "",
+  currency: "GMD",
   featured: false,
   description: "",
   state: "",
@@ -99,6 +101,7 @@ export default function PropertiesPage() {
           phone: apiProp.location?.phone || "",
           status: apiProp.status || "for-sale",
           price: apiProp.price?.toString() || "",
+          currency: apiProp.currency || "GMD",
           featured: !!apiProp.featured,
           description: apiProp.description || "",
           type: apiProp.type || "",
@@ -186,6 +189,7 @@ export default function PropertiesPage() {
           phone: formProperty.phone,
         },
         price: Number(formProperty.price),
+        currency: formProperty.currency || "GMD",
         type: formProperty.type,
         bedrooms: Number(formProperty.bedrooms),
         bathrooms: Number(formProperty.bathrooms),
@@ -363,20 +367,51 @@ export default function PropertiesPage() {
 
             {/* --- Price & Specs --- */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {["price", "bedrooms", "bathrooms", "size"].map((field) => (
+              {/* Price and Currency */}
+              <div className="md:col-span-1">
+                <label className="text-sm text-gray-300">Price</label>
+                <div className="flex gap-2">
+                  <select
+                    name="currency"
+                    title="Currency"
+                    value={formProperty.currency || "GMD"}
+                    onChange={(e) =>
+                      setFormProperty({
+                        ...formProperty,
+                        currency: e.target.value as "GMD" | "USD" | "GBP",
+                      })
+                    }
+                    className="w-24 p-3 rounded-md bg-zinc-800 text-white border border-zinc-700"
+                  >
+                    <option value="GMD">GMD</option>
+                    <option value="USD">USD</option>
+                    <option value="GBP">GBP</option>
+                  </select>
+                  <input
+                    type="number"
+                    placeholder="e.g., 500000"
+                    value={formProperty.price}
+                    onChange={(e) =>
+                      setFormProperty({
+                        ...formProperty,
+                        price: e.target.value,
+                      })
+                    }
+                    required
+                    className="flex-1 p-3 rounded-md bg-zinc-800 text-white border border-zinc-700"
+                  />
+                </div>
+              </div>
+
+              {/* Other fields */}
+              {["bedrooms", "bathrooms", "size"].map((field) => (
                 <div key={field}>
                   <label className="text-sm text-gray-300 capitalize">
                     {field}
                   </label>
                   <input
                     type="number"
-                    placeholder={`e.g., ${
-                      field === "price"
-                        ? "500000"
-                        : field === "size"
-                        ? "120"
-                        : "3"
-                    }`}
+                    placeholder={`e.g., ${field === "size" ? "120" : "3"}`}
                     value={(formProperty as any)[field]}
                     onChange={(e) =>
                       setFormProperty({
