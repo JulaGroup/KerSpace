@@ -4,7 +4,13 @@ import { useEffect, useState, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { Maximize2, Minimize2, Navigation, Layers, ExternalLink } from "lucide-react";
+import {
+  Maximize2,
+  Minimize2,
+  Navigation,
+  Layers,
+  ExternalLink,
+} from "lucide-react";
 import { Button } from "./ui/button";
 
 // Fix for default marker icon in Next.js
@@ -20,7 +26,9 @@ L.Icon.Default.mergeOptions({
 
 // Custom marker icon with house symbol
 const createCustomIcon = (price?: string) => {
-  const priceLabel = price ? `<div class="bg-blue-600 text-white px-2 py-1 rounded-md text-xs font-bold shadow-lg mb-1">${price}</div>` : '';
+  const priceLabel = price
+    ? `<div class="bg-blue-600 text-white px-2 py-1 rounded-md text-xs font-bold shadow-lg mb-1">${price}</div>`
+    : "";
   return L.divIcon({
     html: `
       <div class="flex flex-col items-center">
@@ -33,7 +41,7 @@ const createCustomIcon = (price?: string) => {
         <div class="w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-red-600"></div>
       </div>
     `,
-    className: 'custom-marker',
+    className: "custom-marker",
     iconSize: [48, 60],
     iconAnchor: [24, 60],
   });
@@ -48,13 +56,24 @@ interface PropertyMapProps {
 }
 
 // Map controls component
-function MapControls({ lat, lng, onRecenter }: { lat: number; lng: number; onRecenter: () => void }) {
+function MapControls({
+  lat,
+  lng,
+  onRecenter,
+}: {
+  lat: number;
+  lng: number;
+  onRecenter: () => void;
+}) {
   const map = useMap();
-  const [mapType, setMapType] = useState<'street' | 'satellite' | 'terrain'>('street');
+  const [mapType, setMapType] = useState<"street" | "satellite" | "terrain">(
+    "street"
+  );
 
   const tileUrls = {
     street: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    satellite: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    satellite:
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     terrain: "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
   };
 
@@ -66,11 +85,12 @@ function MapControls({ lat, lng, onRecenter }: { lat: number; lng: number; onRec
     });
 
     L.tileLayer(tileUrls[mapType], {
-      attribution: mapType === 'street' 
-        ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        : mapType === 'satellite'
-        ? '&copy; Esri'
-        : '&copy; OpenTopoMap',
+      attribution:
+        mapType === "street"
+          ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          : mapType === "satellite"
+          ? "&copy; Esri"
+          : "&copy; OpenTopoMap",
     }).addTo(map);
   }, [mapType, map]);
 
@@ -101,7 +121,13 @@ function MapControls({ lat, lng, onRecenter }: { lat: number; lng: number; onRec
   );
 }
 
-export function PropertyMap({ lat, lng, title, address, price }: PropertyMapProps) {
+export function PropertyMap({
+  lat,
+  lng,
+  title,
+  address,
+  price,
+}: PropertyMapProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [key, setKey] = useState(0);
@@ -117,17 +143,19 @@ export function PropertyMap({ lat, lng, title, address, price }: PropertyMapProp
   };
 
   const recenterMap = () => {
-    setKey(prev => prev + 1);
+    setKey((prev) => prev + 1);
   };
 
   const openInGoogleMaps = () => {
-    window.open(`https://www.google.com/maps?q=${lat},${lng}`, '_blank');
+    window.open(`https://www.google.com/maps?q=${lat},${lng}`, "_blank");
   };
 
   return (
-    <div 
+    <div
       ref={mapContainerRef}
-      className={`w-full h-full rounded-lg sm:rounded-xl overflow-hidden relative ${isFullscreen ? 'bg-black' : ''}`}
+      className={`w-full h-full rounded-lg sm:rounded-xl overflow-hidden relative ${
+        isFullscreen ? "bg-black" : ""
+      }`}
     >
       <MapContainer
         key={key}
@@ -146,8 +174,12 @@ export function PropertyMap({ lat, lng, title, address, price }: PropertyMapProp
           <Popup>
             <div className="p-2 min-w-[200px]">
               <h3 className="font-bold text-sm mb-1">{title}</h3>
-              {address && <p className="text-xs text-gray-600 mb-2">{address}</p>}
-              {price && <p className="text-blue-600 font-bold text-sm">{price}</p>}
+              {address && (
+                <p className="text-xs text-gray-600 mb-2">{address}</p>
+              )}
+              {price && (
+                <p className="text-blue-600 font-bold text-sm">{price}</p>
+              )}
               <button
                 onClick={openInGoogleMaps}
                 className="mt-2 text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1"
@@ -169,7 +201,11 @@ export function PropertyMap({ lat, lng, title, address, price }: PropertyMapProp
         onClick={toggleFullscreen}
         title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
       >
-        {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+        {isFullscreen ? (
+          <Minimize2 className="h-4 w-4" />
+        ) : (
+          <Maximize2 className="h-4 w-4" />
+        )}
       </Button>
 
       {/* Google Maps link */}

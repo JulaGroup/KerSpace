@@ -966,7 +966,7 @@ export default function PropertyDetailPage() {
                   </div>
                   <div className="text-gray-600 leading-relaxed text-base sm:text-lg space-y-4">
                     {(() => {
-                      const lines = property.description.split("\n");
+                      const lines = (property.description || "").split("\n");
                       const elements = [];
                       let i = 0;
 
@@ -1879,7 +1879,7 @@ export default function PropertyDetailPage() {
                     lng={property.location.coordinates.lng}
                     title={property.title}
                     address={property.location.address}
-                    price={`D${property.price.toLocaleString()}`}
+                    price={`D${property.price?.toLocaleString() ?? '0'}`}
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg sm:rounded-xl flex items-center justify-center">
@@ -1888,7 +1888,9 @@ export default function PropertyDetailPage() {
                       <p className="text-gray-700 text-lg font-medium">
                         Interactive Map
                       </p>
-                      <p className="text-gray-500">Location coordinates not available</p>
+                      <p className="text-gray-500">
+                        Location coordinates not available
+                      </p>
                     </div>
                   </div>
                 )}

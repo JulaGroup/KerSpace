@@ -50,7 +50,7 @@ export function MapPicker({ value, onChange }: MapPickerProps) {
         <div class="w-0 h-0 border-l-4 border-r-4 border-t-8 border-l-transparent border-r-transparent border-t-blue-600 absolute left-1/2 -translate-x-1/2"></div>
       </div>
     `,
-    className: 'custom-picker-marker',
+    className: "custom-picker-marker",
     iconSize: [40, 50],
     iconAnchor: [20, 50],
   });
@@ -78,7 +78,9 @@ export function MapPicker({ value, onChange }: MapPickerProps) {
       mapInstanceRef.current.removeLayer(markerRef.current);
     }
     if (mapInstanceRef.current) {
-      markerRef.current = L.marker([lat, lng], { icon: customIcon }).addTo(mapInstanceRef.current);
+      markerRef.current = L.marker([lat, lng], { icon: customIcon }).addTo(
+        mapInstanceRef.current
+      );
     }
   };
 
@@ -98,7 +100,9 @@ export function MapPicker({ value, onChange }: MapPickerProps) {
         (error) => {
           console.error("Geolocation error:", error);
           setLoading(false);
-          alert("Unable to get your location. Please enable location services.");
+          alert(
+            "Unable to get your location. Please enable location services."
+          );
         }
       );
     } else {
@@ -136,14 +140,19 @@ export function MapPicker({ value, onChange }: MapPickerProps) {
     try {
       // Using Nominatim API for geocoding
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=1`
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          searchQuery
+        )}&limit=1`
       );
       const data = await response.json();
       if (data && data.length > 0) {
         const { lat, lon } = data[0];
         onChange({ gplusCode: `${lat},${lon}` });
         if (mapInstanceRef.current) {
-          mapInstanceRef.current.setView([parseFloat(lat), parseFloat(lon)], 15);
+          mapInstanceRef.current.setView(
+            [parseFloat(lat), parseFloat(lon)],
+            15
+          );
           updateMarker(parseFloat(lat), parseFloat(lon));
         }
       } else {
@@ -185,7 +194,7 @@ export function MapPicker({ value, onChange }: MapPickerProps) {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search for an address..."
-            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+            onKeyPress={(e) => e.key === "Enter" && handleSearch()}
             className="flex-1"
           />
           <Button
@@ -227,12 +236,17 @@ export function MapPicker({ value, onChange }: MapPickerProps) {
 
       {/* Map Container */}
       <div className="relative">
-        <div ref={mapRef} className="h-[450px] bg-muted rounded-lg border-2 border-gray-200 dark:border-gray-700 shadow-lg relative">
+        <div
+          ref={mapRef}
+          className="h-[450px] bg-muted rounded-lg border-2 border-gray-200 dark:border-gray-700 shadow-lg relative"
+        >
           {loading && (
             <div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-gray-900 bg-opacity-75 z-[1000]">
               <div className="text-center">
                 <Spinner />
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Loading...</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                  Loading...
+                </p>
               </div>
             </div>
           )}
