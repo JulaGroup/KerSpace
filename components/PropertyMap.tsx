@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -70,12 +70,15 @@ function MapControls({
     "street"
   );
 
-  const tileUrls = {
-    street: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    satellite:
-      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-    terrain: "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
-  };
+  const tileUrls = useMemo(
+    () => ({
+      street: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      satellite:
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      terrain: "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+    }),
+    []
+  );
 
   useEffect(() => {
     map.eachLayer((layer) => {
@@ -92,7 +95,7 @@ function MapControls({
           ? "&copy; Esri"
           : "&copy; OpenTopoMap",
     }).addTo(map);
-  }, [mapType, map]);
+  }, [mapType, map, tileUrls]);
 
   return (
     <div className="absolute top-2 right-2 z-[1000] flex flex-col gap-2">

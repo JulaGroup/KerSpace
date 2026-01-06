@@ -84,39 +84,40 @@ export default function HomePage() {
   const services = [
     {
       icon: Search,
-      title: "Advanced Search",
+      title: "Smart Property Search",
       description:
-        "Find properties with powerful filters and real-time results.",
-      link: "/services/advanced-search",
+        "Easily find homes, apartments, offices, and land using simple, powerful filters.",
+      link: "/properties",
       color: "from-blue-400 to-blue-600",
       hoverColor: "hover:shadow-blue-500/25",
     },
     {
       icon: Home,
-      title: "Quality Listings",
+      title: "Carefully Curated Listings",
       description:
-        "All properties are verified and reviewed by our expert team.",
-      link: "/services/quality-listings",
+        "We work closely with property owners and agents to list clear, genuine opportunities.",
+      link: "/listings",
       color: "from-purple-400 to-purple-600",
       hoverColor: "hover:shadow-purple-500/25",
     },
     {
       icon: Users,
-      title: "Expert Support",
-      description: "Get guidance from experienced real estate professionals.",
-      link: "/services/expert-support",
+      title: "Direct Connections",
+      description:
+        "Connect directly with property owners, agents, and verified companies through KërSpace.",
+      link: "/contact",
       color: "from-pink-400 to-pink-600",
       hoverColor: "hover:shadow-pink-500/25",
     },
-    // {
-    //   icon: CheckCircle,
-    //   title: "Secure Transactions",
-    //   description:
-    //     "Safe and secure property transactions with full documentation.",
-    //   link: "/services/secure-transactions",
-    //   color: "from-green-400 to-green-600",
-    //   hoverColor: "hover:shadow-green-500/25",
-    // },
+    {
+      icon: CheckCircle,
+      title: "Built for Growth",
+      description:
+        "A modern platform designed to grow with The Gambia’s real estate market.",
+      link: "/about",
+      color: "from-green-400 to-green-600",
+      hoverColor: "hover:shadow-green-500/25",
+    },
   ];
 
   const router = useRouter();

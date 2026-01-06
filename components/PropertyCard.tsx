@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Heart, Bed, Bath, Square, MapPin, Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { optimizeCloudinaryImage } from "@/lib/cloudinary";
 
 interface PropertyCardProps {
   property: Property;
@@ -133,7 +134,11 @@ export function PropertyCard({
               <div className="absolute inset-0 bg-gray-200 animate-pulse" />
             )}
             <Image
-              src={property.images![0]}
+              src={optimizeCloudinaryImage(property.images![0], {
+                width: viewMode === "list" ? 400 : 800,
+                height: viewMode === "list" ? 300 : 600,
+                quality: "auto",
+              })}
               alt={property.title}
               fill
               className={cn(
@@ -142,6 +147,11 @@ export function PropertyCard({
                 viewMode === "list" ? "rounded-l-xl" : "rounded-t-xl"
               )}
               onLoad={() => setImageLoaded(true)}
+              sizes={
+                viewMode === "list"
+                  ? "(max-width: 768px) 200px, 400px"
+                  : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              }
             />
           </div>
 

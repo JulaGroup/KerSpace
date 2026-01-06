@@ -65,6 +65,10 @@ import { toast } from "sonner";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import LoadingPage from "@/app/loading";
 import dynamic from "next/dynamic";
+import { StructuredData } from "@/components/StructuredData";
+import { generatePropertyStructuredData } from "@/lib/structured-data";
+import { ContactButtons } from "@/components/ContactButtons";
+import { SwipeableGallery } from "@/components/SwipeableGallery";
 
 // Dynamically import PropertyMap to avoid SSR issues with Leaflet
 const PropertyMap = dynamic(
@@ -92,12 +96,10 @@ export default function PropertyDetailPage() {
   const params = useParams();
   const { isAuthenticated, user } = useAuth();
   const [property, setProperty] = useState<Property | null>(null);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { isFavorite, refreshFavorites } = useFavorites();
   const [isFavoriting, setIsFavoriting] = useState(false);
   const [isAppointmentDialogOpen, setIsAppointmentDialogOpen] = useState(false);
-  const [isRequestInfoDialogOpen, setIsRequestInfoDialogOpen] = useState(false); // New state for Request More Info dialog
-  const [isFullScreenImageOpen, setIsFullScreenImageOpen] = useState(false);
+  const [isRequestInfoDialogOpen, setIsRequestInfoDialogOpen] = useState(false);
   const [appointmentForm, setAppointmentForm] = useState({
     name: "",
     email: "",
@@ -336,18 +338,6 @@ export default function PropertyDetailPage() {
     );
   }
 
-  const nextImage = () => {
-    setCurrentImageIndex((prev) =>
-      prev === property.images!.length - 1 ? 0 : prev + 1
-    );
-  };
-
-  const prevImage = () => {
-    setCurrentImageIndex((prev) =>
-      prev === 0 ? property.images!.length - 1 : prev - 1
-    );
-  };
-
   const handleAppointmentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isAuthenticated) {
@@ -543,6 +533,9 @@ export default function PropertyDetailPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
       <Header />
+      
+      {/* Add Structured Data for SEO */}
+      <StructuredData data={generatePropertyStructuredData(property)} />
 
       {/* Hero Section with Enhanced Background */}
       <div className="relative">
@@ -809,145 +802,13 @@ export default function PropertyDetailPage() {
           {/* Image Gallery - Moved to top of main content */}
           <div className="mb-8">
             <Card className="overflow-hidden shadow-xl border-0 bg-white/90 backdrop-blur-sm">
-              <CardContent className="p-0">
-                <div
-                  className="relative h-[70vh] sm:h-[60vh] lg:h-[70vh] overflow-hidden cursor-pointer group"
-                  onClick={() => setIsFullScreenImageOpen(true)}
-                >
-                  <Image
-                    src={property.images![currentImageIndex]}
-                    alt={property.title}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-
-                  {/* Image Counter */}
-                  <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-md text-white px-3 py-2 rounded-lg text-sm font-medium">
-                    <Camera className="inline h-4 w-4 mr-2" />
-                    {currentImageIndex + 1} / {property.images!.length}
-                  </div>
-
-                  {/* Navigation Arrows */}
-                  {property.images!.length > 1 && (
-                    <>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white backdrop-blur-md shadow-lg border-0 w-12 h-12 rounded-xl transition-all duration-200 hover:scale-105"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          prevImage();
-                        }}
-                        aria-label="Previous image"
-                      >
-                        <ChevronLeft className="h-5 w-5 text-gray-700" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white backdrop-blur-md shadow-lg border-0 w-12 h-12 rounded-xl transition-all duration-200 hover:scale-105"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          nextImage();
-                        }}
-                        aria-label="Next image"
-                      >
-                        <ChevronRight className="h-5 w-5 text-gray-700" />
-                      </Button>
-                    </>
-                  )}
-
-                  {/* View Full Screen Hint */}
-                  <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-md text-gray-800 px-3 py-2 rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    Click to view full screen
-                  </div>
-                </div>
-
-                {/* Thumbnail Gallery */}
-                {property.images!.length > 1 && (
-                  <div className="p-4 bg-gray-50">
-                    <div className="flex space-x-2 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                      {property.images!.map((image, index) => (
-                        <button
-                          key={index}
-                          className={`relative w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
-                            index === currentImageIndex
-                              ? "border-blue-500 shadow-md"
-                              : "border-gray-200 hover:border-gray-300"
-                          }`}
-                          onClick={() => setCurrentImageIndex(index)}
-                          aria-label={`View image ${index + 1}`}
-                        >
-                          <Image
-                            src={image}
-                            alt={`${property.title} ${index + 1}`}
-                            fill
-                            className="object-cover"
-                          />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
+              <CardContent className="p-4">
+                <SwipeableGallery
+                  images={property.images!}
+                  title={property.title}
+                />
               </CardContent>
             </Card>
-
-            {/* Full-screen Image Dialog */}
-            <Dialog
-              open={isFullScreenImageOpen}
-              onOpenChange={setIsFullScreenImageOpen}
-            >
-              <DialogContent className="max-w-full h-[100vh] p-0 flex flex-col bg-black/95 backdrop-blur-xl">
-                <DialogHeader className="p-4 sm:p-6 flex flex-row justify-between items-center bg-black/80 text-white backdrop-blur-md">
-                  <DialogTitle className="text-lg sm:text-xl lg:text-2xl font-semibold truncate pr-4">
-                    {property.title} - Image {currentImageIndex + 1} of{" "}
-                    {property.images!.length}
-                  </DialogTitle>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setIsFullScreenImageOpen(false)}
-                    className="text-white hover:bg-white/20 w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex-shrink-0"
-                  >
-                    <X className="h-5 w-5 sm:h-6 sm:w-6" />
-                  </Button>
-                </DialogHeader>
-                <div className="relative flex-1 bg-black flex items-center justify-center">
-                  <Image
-                    src={property.images![currentImageIndex]}
-                    alt={property.title}
-                    fill
-                    className="object-contain"
-                  />
-                  {property.images!.length > 1 && (
-                    <>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white hover:bg-black/70 backdrop-blur-md w-10 h-10 rounded-lg transition-all duration-200"
-                        onClick={prevImage}
-                        aria-label="Previous image"
-                      >
-                        <ChevronLeft className="h-5 w-5" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white hover:bg-black/70 backdrop-blur-md w-10 h-10 rounded-lg transition-all duration-200"
-                        onClick={nextImage}
-                        aria-label="Next image"
-                      >
-                        <ChevronRight className="h-5 w-5" />
-                      </Button>
-                    </>
-                  )}
-
-                  <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-white/20 backdrop-blur-md text-white px-6 py-3 rounded-xl text-sm font-medium">
-                    {currentImageIndex + 1} / {property.images!.length}
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
           </div>
         </div>
       </div>
@@ -1838,6 +1699,27 @@ export default function PropertyDetailPage() {
                 </Dialog>
               </CardContent>
             </Card>
+
+            {/* Contact Agent Card */}
+            {property.location.phone && (
+              <Card className="shadow-xl lg:shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
+                <CardHeader className="pb-4 sm:pb-6">
+                  <CardTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent flex items-center">
+                    <Phone className="h-5 w-5 sm:h-6 sm:w-6 mr-2 sm:mr-3 text-green-600" />
+                    <span className="text-base sm:text-xl">Contact Agent</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ContactButtons
+                    phone={property.location.phone}
+                    propertyTitle={property.title}
+                  />
+                  <p className="text-sm text-gray-500 mt-4 text-center">
+                    Get instant response via phone or WhatsApp
+                  </p>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
 

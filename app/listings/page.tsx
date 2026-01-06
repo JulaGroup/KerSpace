@@ -1,3 +1,17 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Property Listings | KërSpace - Buy & Rent in The Gambia",
+  description:
+    "Browse verified property listings in The Gambia. Find apartments, houses, offices, and land for sale or rent across Serrekunda, Senegambia, Brusubi, and more.",
+  openGraph: {
+    title: "Property Listings | KërSpace",
+    description:
+      "Browse verified property listings in The Gambia. Find apartments, houses, offices, and land for sale or rent.",
+    url: "https://kerspace.gm/listings",
+  },
+};
+
 "use client";
 import { API_URL } from "@/config/constat";
 import { useState, useEffect } from "react";

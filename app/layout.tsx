@@ -5,6 +5,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { Toaster } from "@/components/ui/sonner";
 import { HeaderWrapper } from "@/components/HeaderWrapper";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
 import React from "react";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -117,7 +118,8 @@ export default function RootLayout({
             <div className="mb-16">
               <HeaderWrapper />
             </div>
-            {children}
+            <div className="pb-20 lg:pb-0">{children}</div>
+            <MobileBottomNav />
             <Toaster />
           </FavoritesProvider>
         </AuthProvider>

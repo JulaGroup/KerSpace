@@ -1,3 +1,17 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About Us | KërSpace - The Gambia's Trusted Property Hub",
+  description:
+    "Learn about KërSpace, The Gambia's leading real estate platform. Our mission is to connect people with their dream properties across The Gambia.",
+  openGraph: {
+    title: "About KërSpace | The Gambia's Property Hub",
+    description:
+      "Learn about KërSpace, The Gambia's leading real estate platform connecting buyers, sellers, and renters.",
+    url: "https://kerspace.gm/about",
+  },
+};
+
 "use client";
 
 import { useState, useEffect } from "react";
