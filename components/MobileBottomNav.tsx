@@ -10,7 +10,12 @@ const navItems = [
   { icon: Home, label: "Home", href: "/" },
   { icon: Search, label: "Listings", href: "/listings" },
   { icon: Heart, label: "Favorites", href: "/favorites", requiresAuth: true },
-  { icon: Building, label: "Dashboard", href: "/dashboard", requiresAuth: true },
+  {
+    icon: Building,
+    label: "Dashboard",
+    href: "/dashboard",
+    requiresAuth: true,
+  },
   { icon: User, label: "Account", href: "/auth" },
 ];
 
@@ -29,13 +34,23 @@ export function MobileBottomNav() {
           const isActive = pathname === item.href;
 
           // Hide auth-required items if not authenticated
-          if (item.requiresAuth && !isAuthenticated && item.label !== "Account") {
+          if (
+            item.requiresAuth &&
+            !isAuthenticated &&
+            item.label !== "Account"
+          ) {
             return null;
           }
 
           // Change Account to Dashboard if authenticated
-          const href = item.label === "Account" && isAuthenticated ? "/dashboard" : item.href;
-          const label = item.label === "Account" && isAuthenticated ? "Dashboard" : item.label;
+          const href =
+            item.label === "Account" && isAuthenticated
+              ? "/dashboard"
+              : item.href;
+          const label =
+            item.label === "Account" && isAuthenticated
+              ? "Dashboard"
+              : item.label;
 
           return (
             <Link
@@ -43,9 +58,7 @@ export function MobileBottomNav() {
               href={href}
               className={cn(
                 "flex flex-col items-center justify-center flex-1 h-full transition-colors duration-200",
-                isActive
-                  ? "text-blue-600"
-                  : "text-gray-600 hover:text-blue-600"
+                isActive ? "text-blue-600" : "text-gray-600 hover:text-blue-600"
               )}
             >
               <Icon

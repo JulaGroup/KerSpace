@@ -6,10 +6,10 @@
 export interface CloudinaryOptions {
   width?: number;
   height?: number;
-  quality?: 'auto' | number;
-  format?: 'auto' | 'webp' | 'jpg' | 'png';
-  crop?: 'fill' | 'scale' | 'fit' | 'limit' | 'pad';
-  gravity?: 'auto' | 'face' | 'center';
+  quality?: "auto" | number;
+  format?: "auto" | "webp" | "jpg" | "png";
+  crop?: "fill" | "scale" | "fit" | "limit" | "pad";
+  gravity?: "auto" | "face" | "center";
   blur?: number;
 }
 
@@ -23,17 +23,17 @@ export function optimizeCloudinaryImage(
   url: string,
   options: CloudinaryOptions = {}
 ): string {
-  if (!url || !url.includes('cloudinary.com')) {
+  if (!url || !url.includes("cloudinary.com")) {
     return url;
   }
 
   const {
     width,
     height,
-    quality = 'auto',
-    format = 'auto',
-    crop = 'fill',
-    gravity = 'auto',
+    quality = "auto",
+    format = "auto",
+    crop = "fill",
+    gravity = "auto",
     blur,
   } = options;
 
@@ -59,12 +59,12 @@ export function optimizeCloudinaryImage(
   if (blur) transformations.push(`e_blur:${blur}`);
 
   // Add DPR for retina displays
-  transformations.push('dpr_auto');
+  transformations.push("dpr_auto");
 
-  const transformString = transformations.join(',');
+  const transformString = transformations.join(",");
 
   // Insert transformations into the URL
-  return url.replace('/upload/', `/upload/${transformString}/`);
+  return url.replace("/upload/", `/upload/${transformString}/`);
 }
 
 /**
@@ -76,35 +76,35 @@ export const CloudinaryPresets = {
       width: 400,
       height: 300,
       quality: 80,
-      crop: 'fill',
-      gravity: 'auto',
+      crop: "fill",
+      gravity: "auto",
     }),
 
   card: (url: string) =>
     optimizeCloudinaryImage(url, {
       width: 800,
       height: 600,
-      quality: 'auto',
-      crop: 'fill',
-      gravity: 'auto',
+      quality: "auto",
+      crop: "fill",
+      gravity: "auto",
     }),
 
   hero: (url: string) =>
     optimizeCloudinaryImage(url, {
       width: 1920,
       height: 1080,
-      quality: 'auto',
-      crop: 'fill',
-      gravity: 'auto',
+      quality: "auto",
+      crop: "fill",
+      gravity: "auto",
     }),
 
   gallery: (url: string) =>
     optimizeCloudinaryImage(url, {
       width: 1200,
       height: 900,
-      quality: 'auto',
-      crop: 'fill',
-      gravity: 'auto',
+      quality: "auto",
+      crop: "fill",
+      gravity: "auto",
     }),
 
   blur: (url: string) =>

@@ -533,7 +533,7 @@ export default function PropertyDetailPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
       <Header />
-      
+
       {/* Add Structured Data for SEO */}
       <StructuredData data={generatePropertyStructuredData(property)} />
 

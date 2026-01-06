@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   },
 };
 
-"use client";
+("use client");
 import { API_URL } from "@/config/constat";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
