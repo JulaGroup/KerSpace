@@ -1,6 +1,7 @@
+"use client";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
+const metadata: Metadata = {
   title: "About Us | KërSpace - The Gambia's Trusted Property Hub",
   description:
     "Learn about KërSpace, The Gambia's leading real estate platform. Our mission is to connect people with their dream properties across The Gambia.",
@@ -11,8 +12,6 @@ export const metadata: Metadata = {
     url: "https://kerspace.gm/about",
   },
 };
-
-("use client");
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
