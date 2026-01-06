@@ -14,7 +14,6 @@ export const metadata: Metadata = {
   title: "KërSpace | The Property Hub of The Gambia – Buy, Rent & Invest",
   description:
     "KërSpace is The Gambia’s trusted property hub to buy, rent, sell, and invest in homes, apartments, offices, and land. Verified listings, local expertise, and diaspora-friendly real estate solutions.",
-
   keywords: [
     // Brand
     "KërSpace",
