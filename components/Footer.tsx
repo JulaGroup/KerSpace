@@ -15,7 +15,7 @@ export function Footer() {
             <div>
               <Link
                 href="/"
-                className="flex items-center space-x-3 group bg-white p-3 rounded-md shadow-md hover:shadow-lg transition-shadow"
+                className="flex items-center w-[80px] space-x-3 group bg-white p-3 rounded-md shadow-md hover:shadow-lg transition-shadow"
               >
                 <Image src="/logo.png" alt="logo" width={70} height={70} />
               </Link>
