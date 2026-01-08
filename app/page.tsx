@@ -7,6 +7,7 @@ import { PropertyCard } from "@/components/PropertyCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Property } from "@/types/property";
+import { Footer } from "@/components/Footer";
 import {
   Building,
   Users,
@@ -432,130 +433,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Enhanced Footer */}
-      <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-gray-300 py-16 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-5" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
-            {/* KërSpace Brand Section */}
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-2xl font-bold text-white mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  KërSpace
-                </h3>
-                <p className="text-gray-400 leading-relaxed">
-                  Your trusted partner in finding and selling properties in The
-                  Gambia and beyond. Connecting dreams with reality through
-                  innovative technology.
-                </p>
-              </div>
-              <div className="flex space-x-4">
-                <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors cursor-pointer">
-                  <span className="text-white font-bold">f</span>
-                </div>
-                <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center hover:bg-purple-700 transition-colors cursor-pointer">
-                  <span className="text-white font-bold">in</span>
-                </div>
-                <div className="w-10 h-10 bg-pink-600 rounded-full flex items-center justify-center hover:bg-pink-700 transition-colors cursor-pointer">
-                  <span className="text-white font-bold">ig</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Links */}
-            <div>
-              <h4 className="text-lg font-semibold text-white mb-6">
-                Quick Links
-              </h4>
-              <ul className="space-y-3">
-                {[
-                  { label: "Home", href: "/" },
-                  { label: "About", href: "/about" },
-                  { label: "Listings", href: "/listings" },
-                  { label: "Contact", href: "/contact" },
-                ].map((link) => (
-                  <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="text-gray-400 hover:text-white transition-colors duration-300 flex items-center group"
-                    >
-                      <ArrowRight className="h-4 w-4 mr-2 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Contact Info */}
-            <div>
-              <h4 className="text-lg font-semibold text-white mb-6">
-                Get In Touch
-              </h4>
-              <ul className="space-y-4">
-                <li className="flex items-center">
-                  <div className="w-10 h-10 bg-blue-600/20 rounded-lg flex items-center justify-center mr-3">
-                    <span className="text-blue-400">📞</span>
-                  </div>
-                  <div>
-                    <p className="text-white font-medium">
-                      +220 7595999 or +220 390 2798
-                    </p>
-                    <p className="text-gray-400 text-sm">24/7 Support</p>
-                  </div>
-                </li>
-                <li className="flex items-center">
-                  <div className="w-10 h-10 bg-purple-600/20 rounded-lg flex items-center justify-center mr-3">
-                    <span className="text-purple-400">✉️</span>
-                  </div>
-                  <div>
-                    <p className="text-white font-medium">
-                      ker.spacegm@gmail.com
-                    </p>
-                    <p className="text-gray-400 text-sm">Email us anytime</p>
-                  </div>
-                </li>
-                <li className="flex items-start">
-                  <div className="w-10 h-10 bg-green-600/20 rounded-lg flex items-center justify-center mr-3 mt-1">
-                    <span className="text-green-400">📍</span>
-                  </div>
-                  <div>
-                    <p className="text-white font-medium">Turntable</p>
-                    <p className="text-gray-400 text-sm">Brusubi, The Gambia</p>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 text-center md:text-left">
-              &copy; 2024 KërSpace. All rights reserved. Powered by
-              <Image
-                src="/terango-logo.jpg"
-                alt="TeranGO"
-                width={120}
-                height={50}
-                className="inline-block ml-2"
-              />
-            </p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link
-                href="/privacy"
-                className="text-gray-400 hover:text-white transition-colors text-sm"
-              >
-                Privacy Policy
-              </Link>
-              <Link
-                href="/terms"
-                className="text-gray-400 hover:text-white transition-colors text-sm"
-              >
-                Terms of Service
-              </Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

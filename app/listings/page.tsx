@@ -58,6 +58,7 @@ import {
 import axios from "axios";
 import { SkeletonPropertyCard } from "@/components/dashboard/SkeletonPropertyCard";
 import { FilterSidebar } from "@/components/FilterSidebar";
+import { Footer } from "@/components/Footer";
 
 export default function ListingsPage() {
   const searchParams = useSearchParams();
@@ -605,6 +606,8 @@ export default function ListingsPage() {
           )}
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }
