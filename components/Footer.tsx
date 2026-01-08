@@ -105,8 +105,22 @@ export function Footer() {
 
         <div className="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-center md:text-left">
-            &copy; 2024 KërSpace. All rights reserved. Built with ❤️ for The
-            Gambia.
+            &copy; 2025 KërSpace. All rights reserved. Powered by{" "}
+            <Link
+              href="https://terango.gm"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block"
+            >
+              <Image
+                src="/terango-logo.jpg"
+                alt="TeranGO"
+                width={80}
+                height={20}
+                className="inline-block ml-2"
+              />
+            </Link>
+            .
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <Link
